@@ -41,7 +41,7 @@ parser.add_argument('--weight-decay', '--wd', default=1e-4, type=float,
                     metavar='W', help='weight decay (default: 1e-4)')
 parser.add_argument('--save-freq', default='10', type=int, metavar='S',
                     help='save frequency')
-parser.add_argument('--resume', default='177.ckpt', type=str, metavar='PATH',
+parser.add_argument('--resume', default=None, type=str, metavar='PATH',
                     help='path to latest checkpoint (default: none)')
 parser.add_argument('--save-dir', default='test_results/se_focal_fold6/', type=str, metavar='SAVE',
                     help='directory to save checkpoint (default: none)')
