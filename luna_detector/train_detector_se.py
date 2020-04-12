@@ -2,7 +2,8 @@ import argparse
 import os
 import time
 import numpy as np
-from data_loader import LungNodule3Ddetector, collate
+from data_loader import collate
+from lidc_dataset import LIDCDataset
 from importlib import import_module
 import shutil
 from utils import *
@@ -117,11 +118,13 @@ def main():
         test(test_loader, net, get_pbb, save_dir, config)
         return
 
-    dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
+    # dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
+    dataset = LIDCDataset(datadir)
     train_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
                               pin_memory=True)
 
-    dataset = LungNodule3Ddetector(datadir, luna_test, config, phase='val')
+    # dataset = LungNodule3Ddetector(datadir, luna_test, config, phase='val')
+    dataset = LIDCDataset(datadir)
     val_loader = DataLoader(dataset, batch_size=16, shuffle=False, num_workers=args.workers, pin_memory=True)
 
     optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=args.weight_decay)
@@ -167,8 +170,7 @@ def train(data_loader, net, loss, epoch, optimizer, get_lr, save_dir):
 
     metrics = []
     for i, (data, target, coord) in enumerate(data_loader):
-        kek = data.cuda(asyncc=True)
-        data = torch.autograd.Variable(kek)
+        data = torch.autograd.Variable(data.cuda(non_blocking=True))
         target = torch.autograd.Variable(target.cuda(non_blocking=True))
         coord = torch.autograd.Variable(coord.cuda(non_blocking=True))
 
