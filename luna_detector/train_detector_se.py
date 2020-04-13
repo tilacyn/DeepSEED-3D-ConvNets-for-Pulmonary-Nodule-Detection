@@ -92,7 +92,7 @@ def main():
     cudnn.benchmark = True
     net = DataParallel(net)
     # datadir = config_training['preprocess_result_path']
-    datadir = data_path
+    datadir = '/content/drive/My Drive/dsb2018_topcoders/data'
 
     luna_train = np.load('./luna_train.npy')
     luna_test = np.load('./luna_test.npy')
