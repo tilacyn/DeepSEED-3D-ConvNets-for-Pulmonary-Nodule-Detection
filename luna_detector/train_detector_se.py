@@ -1,4 +1,3 @@
-os.chdir(luna_path)
 import argparse
 import os
 import time
