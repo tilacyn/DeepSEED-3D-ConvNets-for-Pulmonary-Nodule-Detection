@@ -176,6 +176,10 @@ def train(data_loader, net, loss, epoch, optimizer, get_lr, save_dir):
         target = torch.autograd.Variable(target.cuda(non_blocking=True))
         coord = torch.autograd.Variable(coord.cuda(non_blocking=True))
 
+        data = data.type(torch.FloatTensor)
+        target = target.type(torch.FloatTensor)
+        coord = coord.type(torch.FloatTensor)
+
         output = net(data, coord)
 
         loss_output = loss(output, target)
