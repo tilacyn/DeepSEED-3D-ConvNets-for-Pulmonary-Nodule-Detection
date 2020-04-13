@@ -334,5 +334,5 @@ def singletest(data, net, config, splitfun, combinefun, n_per_run, margin=64, is
         return output
 
 
-if __name__ == 'main':
+if __name__ == '__main__':
     main()
