@@ -109,10 +109,11 @@ class Net(nn.Module):
         out = self.preBlock(x)  # 16
         print('preblock shape {}'.format(out.shape))
         out_pool, indices0 = self.maxpool1(out)
-        print('maxpool1 shape {} {}'.format(out_pool.shape, indices0))
+        print('maxpool1 shape {} {}'.format(out_pool.shape, indices0.shape))
         out1 = self.forw1(out_pool)  # 32
         print('forw1 shape {}'.format(out1.shape))
         out1_pool, indices1 = self.maxpool2(out1)
+        print('maxpool2 shape {} {}'.format(out1_pool.shape, indices1.shape))
         out2 = self.forw2(out1_pool)  # 64
         out2_pool, indices2 = self.maxpool3(out2)
         out3 = self.forw3(out2_pool)  # 96
