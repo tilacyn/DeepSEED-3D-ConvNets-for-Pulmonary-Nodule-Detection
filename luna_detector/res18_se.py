@@ -33,6 +33,8 @@ class Net(nn.Module):
         super(Net, self).__init__()
         # The first few layers consumes the most memory, so use simple convolution to save memory.
         # Call these layers preBlock, i.e., before the residual blocks of later layers.
+        nn.Conv2d
+        nn.Conv3d
         self.preBlock = nn.Sequential(
             nn.Conv3d(1, 24, kernel_size=3, padding=1),
             nn.BatchNorm3d(24),
