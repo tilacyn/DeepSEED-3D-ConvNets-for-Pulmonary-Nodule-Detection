@@ -123,7 +123,8 @@ class LIDCDataset(Dataset):
         dcms.sort(key=lambda dcm: dcm[1].SliceLocation)
         nodules = parseXML(parent_path)
         # return na([dcm[0] for dcm in dcms]), na([make_mask(dcm[0], dcm[1].SOPInstanceUID, nodules) for dcm in dcms])
-        return np.zeros([1, 5, 256, 256]), np.zeros([1, 5, 256, 256]), np.zeros([1, 5, 256, 256])
+        shape = [1, 20, 100, 100]
+        return np.zeros(shape), np.zeros(shape), np.zeros(shape)
 
     def __len__(self):
         return len(self.ids)
