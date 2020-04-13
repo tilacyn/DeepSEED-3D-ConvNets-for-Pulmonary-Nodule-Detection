@@ -59,8 +59,7 @@ parser.add_argument('--n_test', default=8, type=int, metavar='N',
 
 def main():
     global args
-    args = parser.parse_args('')
-    args.test = 0
+    args = parser.parse_args()
     bestLoss = 1000
 
     torch.manual_seed(0)
