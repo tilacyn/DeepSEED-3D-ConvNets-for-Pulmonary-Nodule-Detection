@@ -110,17 +110,20 @@ class LIDCDataset(Dataset):
     def __getitem__(self, idx):
         dcms = []
         parent_path = self.ids[idx]
+        print('kek')
         for file in os.listdir(parent_path):
             if not file.endswith('dcm'):
                 continue
             image, dcm_data = imread(opjoin(parent_path, file))
             # image = np.reshape(image, (image.shape[0], image.shape[1], 1))
             # image = np.repeat(image, 3, axis=2)
-
+            if not has_slice_location(dcm_data):
+                continue
             dcms.append((image, dcm_data))
         dcms.sort(key=lambda dcm: dcm[1].SliceLocation)
         nodules = parseXML(parent_path)
-        return na([dcm[0] for dcm in dcms]), na([make_mask(dcm[0], dcm[1].SOPInstanceUID, nodules) for dcm in dcms])
+        # return na([dcm[0] for dcm in dcms]), na([make_mask(dcm[0], dcm[1].SOPInstanceUID, nodules) for dcm in dcms])
+        return np.zeros([1, 256, 256]), np.zeros([1, 256, 256])
 
     def __len__(self):
         return len(self.ids)
@@ -131,3 +134,11 @@ class LIDCDataset(Dataset):
                 self.ids.append(root)
             if len(self.ids) > 30:
                 break
+
+def has_slice_location(dcm_data):
+  try:
+    slice_location = dcm_data.SliceLocation
+    return True
+  except:
+    print('No Slice Location')
+    return False

@@ -1,9 +1,10 @@
+os.chdir(luna_path)
 import argparse
 import os
 import time
 import numpy as np
 from data_loader import collate
-from lidc_dataset import LIDCDataset
+# from lidc_dataset import LIDCDataset
 from importlib import import_module
 import shutil
 from utils import *
@@ -58,15 +59,17 @@ parser.add_argument('--n_test', default=8, type=int, metavar='N',
 
 def main():
     global args
-    args = parser.parse_args()
-
+    args = parser.parse_args('')
+    args.test = 0
     bestLoss = 1000
 
     torch.manual_seed(0)
     torch.cuda.set_device(0)
 
     model = import_module(args.model)
+    print('creating model')
     config, net, loss, get_pbb = model.get_model()
+    print('created model')
     start_epoch = args.start_epoch
     save_dir = args.save_dir
 
@@ -90,7 +93,8 @@ def main():
     loss = loss.cuda()
     cudnn.benchmark = True
     net = DataParallel(net)
-    datadir = config_training['preprocess_result_path']
+    # datadir = config_training['preprocess_result_path']
+    datadir = data_path
 
     luna_train = np.load('./luna_train.npy')
     luna_test = np.load('./luna_test.npy')
@@ -330,7 +334,3 @@ def singletest(data, net, config, splitfun, combinefun, n_per_run, margin=64, is
         return output, feature
     else:
         return output
-
-
-if __name__ == '__main__':
-    main()
