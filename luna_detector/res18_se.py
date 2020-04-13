@@ -115,6 +115,7 @@ class Net(nn.Module):
         out1_pool, indices1 = self.maxpool2(out1)
         print('maxpool2 shape {} {}'.format(out1_pool.shape, indices1.shape))
         out2 = self.forw2(out1_pool)  # 64
+        print('forw2 shape {}'.format(out2.shape))
         out2_pool, indices2 = self.maxpool3(out2)
         out3 = self.forw3(out2_pool)  # 96
         out3_pool, indices3 = self.maxpool4(out3)
