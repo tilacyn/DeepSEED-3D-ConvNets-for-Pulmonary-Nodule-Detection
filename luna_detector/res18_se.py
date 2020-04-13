@@ -33,8 +33,6 @@ class Net(nn.Module):
         super(Net, self).__init__()
         # The first few layers consumes the most memory, so use simple convolution to save memory.
         # Call these layers preBlock, i.e., before the residual blocks of later layers.
-        nn.Conv2d
-        nn.Conv3d
         self.preBlock = nn.Sequential(
             nn.Conv3d(1, 24, kernel_size=3, padding=1),
             nn.BatchNorm3d(24),
@@ -107,9 +105,13 @@ class Net(nn.Module):
 
     def forward(self, x, coord):
 
+        print('input shape {}'.format(x.shape))
         out = self.preBlock(x)  # 16
+        print('preblock shape {}'.format(out.shape))
         out_pool, indices0 = self.maxpool1(out)
+        print('maxpool1 shape {} {}'.format(out_pool.shape, indices0))
         out1 = self.forw1(out_pool)  # 32
+        print('forw1 shape {}'.format(out1.shape))
         out1_pool, indices1 = self.maxpool2(out1)
         out2 = self.forw2(out1_pool)  # 64
         out2_pool, indices2 = self.maxpool3(out2)
