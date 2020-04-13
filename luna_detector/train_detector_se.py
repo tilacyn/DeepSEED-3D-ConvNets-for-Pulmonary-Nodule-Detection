@@ -3,7 +3,7 @@ import os
 import time
 import numpy as np
 from data_loader import collate
-# from lidc_dataset import LIDCDataset
+from lidc_dataset import LIDCDataset
 from importlib import import_module
 import shutil
 from utils import *
