@@ -97,10 +97,6 @@ def create_map_from_nodules(nodules):
             id2roi[id].append(roi['xy'])
     return id2roi
 
-
-def get_mask(image, image_id, nodules)
-
-
 def make_mask_for_rgb(image, image_id, nodules):
     filled_mask = image
     for nodule in nodules:
