@@ -97,6 +97,7 @@ def create_map_from_nodules(nodules):
             id2roi[id].append(roi['xy'])
     return id2roi
 
+
 def make_mask_for_rgb(image, image_id, nodules):
     filled_mask = image
     for nodule in nodules:
@@ -119,7 +120,10 @@ def imread(image_path):
 
 def resolve_bbox(dcms, id2roi):
     nodule_coordinates = []
-    for i, image, dcm_data in enumerate(dcms):
+    for i, dcm in enumerate(dcms):
+        image, dcm_data = dcm
+        if dcm_data.SOPInstanceUID not in id2roi:
+            continue
         rois = id2roi[dcm_data.SOPInstanceUID]
         roi = rois[0]
         mean = np.mean(roi, axis=0)
