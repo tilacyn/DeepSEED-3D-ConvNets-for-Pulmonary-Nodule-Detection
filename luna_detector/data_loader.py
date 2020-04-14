@@ -201,8 +201,8 @@ class Crop(object):
         bboxes - array of bboxes, each bbox is an array of 4
 
         '''
-        print('crop input bboxes %s' % bboxes)
-        print('crop input target %s' % target)
+        # print('crop input bboxes %s' % bboxes)
+        # print('crop input target %s' % target)
         if isScale:
             radiusLim = [8., 100.]
             scaleLim = [0.75, 1.25]
@@ -217,7 +217,6 @@ class Crop(object):
         bboxes = np.copy(bboxes)
 
         start = []
-        print(imgs.shape)
         for i in range(3):
             if not isRand:
                 r = target[3] / 2
@@ -234,8 +233,8 @@ class Crop(object):
 
         normstart = np.array(start).astype('float32') / np.array(imgs.shape[1:]) - 0.5
         normsize = np.array(crop_size).astype('float32') / np.array(imgs.shape[1:])
-        print('normstart %s' % normstart)
-        print('normsize %s' % normsize)
+        # print('normstart %s' % normstart)
+        # print('normsize %s' % normsize)
         xx, yy, zz = np.meshgrid(np.linspace(normstart[0], normstart[0] + normsize[0], self.crop_size[0] // self.stride),
                                  np.linspace(normstart[1], normstart[1] + normsize[1], self.crop_size[1] // self.stride),
                                  np.linspace(normstart[2], normstart[2] + normsize[2], self.crop_size[2] // self.stride),
