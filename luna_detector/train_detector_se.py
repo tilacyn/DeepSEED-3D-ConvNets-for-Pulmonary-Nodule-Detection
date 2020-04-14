@@ -222,6 +222,10 @@ def validate(data_loader, net, loss):
         target = torch.autograd.Variable(target.cuda(non_blocking=True))
         coord = torch.autograd.Variable(coord.cuda(non_blocking=True))
 
+        data = data.type(torch.cuda.FloatTensor)
+        target = target.type(torch.cuda.FloatTensor)
+        coord = coord.type(torch.cuda.FloatTensor)
+
         output = net(data, coord)
         loss_output = loss(output, target, train=False)
 
