@@ -127,9 +127,9 @@ class LIDCDataset(Dataset):
         dcms.sort(key=lambda dcm: dcm[1].SliceLocation)
         nodules = parseXML(parent_path)
         # return na([dcm[0] for dcm in dcms]), na([make_mask(dcm[0], dcm[1].SOPInstanceUID, nodules) for dcm in dcms])
-        return torch.from_numpy(np.zeros([1, 128, 128, 128])), \
-               torch.from_numpy(np.zeros([32, 32, 32, 3, 5])), \
-               np.zeros([3, 32, 32, 32])
+        return torch.from_numpy(np.zeros([1, 64, 64, 64])), \
+               torch.from_numpy(np.zeros([16, 16, 16, 3, 5])), \
+               np.zeros([3, 16, 16, 16])
 
     def __len__(self):
         return len(self.ids)
