@@ -114,7 +114,7 @@ class LIDCDataset(Dataset):
     def __getitem__(self, idx):
         dcms = []
         parent_path = self.ids[idx]
-        print('kek')
+        # print('kek')
         for file in os.listdir(parent_path):
             if not file.endswith('dcm'):
                 continue
@@ -147,5 +147,5 @@ def has_slice_location(dcm_data):
         slice_location = dcm_data.SliceLocation
         return True
     except:
-        print('No Slice Location')
+        # print('No Slice Location')
         return False
