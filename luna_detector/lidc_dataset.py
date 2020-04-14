@@ -181,7 +181,7 @@ class LIDCDataset(Dataset):
                 if len(id2roi) == 0:
                     continue
                 self.ids.append(root)
-            if len(self.ids) > 30:
+            if len(self.ids) > 500:
                 break
 
 
