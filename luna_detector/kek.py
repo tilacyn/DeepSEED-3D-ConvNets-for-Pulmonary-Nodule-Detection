@@ -22,4 +22,4 @@ print('created model')
 
 ds = LungNodule3Ddetector(data_dir, idcs, config, phase='train')
 
-# a = ds[0]
+a = ds[0]

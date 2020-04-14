@@ -157,6 +157,7 @@ class LIDCDataset(Dataset):
         nodules = parseXML(parent_path)
         id2roi = create_map_from_nodules(nodules)
         imgs = na([dcm[0] for dcm in dcms])
+        imgs = imgs[np.newaxis, :]
         bbox = resolve_bbox(na(dcms), id2roi)
         print('imgs shape: {}'.format(imgs.shape))
         sample, target, bboxes, coord = self.crop(imgs, bbox, [bbox], isScale=False, isRand=True)

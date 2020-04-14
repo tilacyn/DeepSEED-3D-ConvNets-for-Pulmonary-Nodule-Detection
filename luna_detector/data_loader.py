@@ -217,6 +217,7 @@ class Crop(object):
         bboxes = np.copy(bboxes)
 
         start = []
+        print(imgs.shape)
         for i in range(3):
             if not isRand:
                 r = target[3] / 2
