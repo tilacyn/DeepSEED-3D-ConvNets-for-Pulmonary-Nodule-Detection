@@ -156,6 +156,7 @@ class LIDCDataset(Dataset):
         dcms.sort(key=lambda dcm: dcm[1].SliceLocation)
         nodules = parseXML(parent_path)
         id2roi = create_map_from_nodules(nodules)
+        print(id2roi)
         imgs = na([dcm[0] for dcm in dcms])
         imgs = imgs[np.newaxis, :]
         bbox = resolve_bbox(na(dcms), id2roi)
