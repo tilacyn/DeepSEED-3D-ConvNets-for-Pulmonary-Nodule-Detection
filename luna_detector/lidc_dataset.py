@@ -138,7 +138,7 @@ class LIDCDataset(Dataset):
         self.data_path = data_path
         self.ids = []
         self.create_ids()
-        self.label_mapping = LabelMapping(config, 'test')
+        self.label_mapping = LabelMapping(config, 'train')
         self.crop = Crop(config)
 
     def __getitem__(self, idx):
