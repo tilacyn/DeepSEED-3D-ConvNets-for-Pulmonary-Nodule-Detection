@@ -156,6 +156,7 @@ class LIDCDataset(Dataset):
         id2roi = create_map_from_nodules(nodules)
         imgs = na([dcm[0] for dcm in dcms])
         bbox = resolve_bbox(na(dcms), id2roi)
+        print('imgs shape: %s' % imgs.shape)
         sample, target, bboxes, coord = self.crop(imgs, bbox, [bbox], isScale=False, isRand=True)
 
         label = self.label_mapping(sample.shape[1:], target, bboxes)
