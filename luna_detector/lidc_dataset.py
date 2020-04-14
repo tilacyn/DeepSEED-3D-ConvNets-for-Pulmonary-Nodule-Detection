@@ -86,6 +86,7 @@ def make_mask(image, image_id, nodules):
     # cv2.imwrite('kek1.jpg', filled_mask)
     return np.reshape(filled_mask, (height, width, 1))
 
+
 def create_map_from_nodules(nodules):
     id2roi = {}
     for nodule in nodules:
@@ -96,7 +97,9 @@ def create_map_from_nodules(nodules):
             id2roi[id].append(roi['xy'])
     return id2roi
 
+
 def get_mask(image, image_id, nodules)
+
 
 def make_mask_for_rgb(image, image_id, nodules):
     filled_mask = image
@@ -160,7 +163,7 @@ class LIDCDataset(Dataset):
 
         return torch.from_numpy(sample), \
                torch.from_numpy(label), \
-               np.zeros([3, 16, 16, 16])
+               coord
 
     def __len__(self):
         return len(self.ids)
