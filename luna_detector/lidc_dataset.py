@@ -1,6 +1,8 @@
 import glob
 import os
 from os.path import join as opjoin
+
+import torch
 from torch.utils.data import Dataset
 import xml.etree.ElementTree as ET
 import pydicom as dicom
@@ -11,6 +13,7 @@ import cv2
 from PIL import Image, ImageDraw
 
 from matplotlib import pyplot as plt
+
 
 def parseXML(scan_path):
     '''
@@ -81,6 +84,7 @@ def make_mask(image, image_id, nodules):
     # cv2.imwrite('kek1.jpg', filled_mask)
     return np.reshape(filled_mask, (height, width, 1))
 
+
 def make_mask_for_rgb(image, image_id, nodules):
     filled_mask = image
     for nodule in nodules:
@@ -123,8 +127,9 @@ class LIDCDataset(Dataset):
         dcms.sort(key=lambda dcm: dcm[1].SliceLocation)
         nodules = parseXML(parent_path)
         # return na([dcm[0] for dcm in dcms]), na([make_mask(dcm[0], dcm[1].SOPInstanceUID, nodules) for dcm in dcms])
-        shape = [1, 20, 100, 100]
-        return np.zeros(shape), np.zeros(shape), np.zeros(shape)
+        return torch.from_numpy(np.zeros([1, 128, 128, 128])), \
+               torch.from_numpy(np.zeros([32, 32, 32, 3, 5])), \
+               np.zeros([3, 32, 32, 32])
 
     def __len__(self):
         return len(self.ids)
@@ -136,10 +141,11 @@ class LIDCDataset(Dataset):
             if len(self.ids) > 30:
                 break
 
+
 def has_slice_location(dcm_data):
-  try:
-    slice_location = dcm_data.SliceLocation
-    return True
-  except:
-    print('No Slice Location')
-    return False
+    try:
+        slice_location = dcm_data.SliceLocation
+        return True
+    except:
+        print('No Slice Location')
+        return False

@@ -47,6 +47,7 @@ class LungNodule3Ddetector(Dataset):
         labels = []
 
         for idx in idcs:
+            # print('%s_label.npy' % idx)
             l = np.load(os.path.join(data_dir, '%s_label.npy' % idx))
             if np.all(l == 0):
                 l = np.array([])
@@ -191,6 +192,9 @@ class Crop(object):
         self.pad_value = config['pad_value']
 
     def __call__(self, imgs, target, bboxes, isScale=False, isRand=False):
+        '''
+        bboxes - array of 4 (3 coord and diameter)
+        '''
         if isScale:
             radiusLim = [8., 100.]
             scaleLim = [0.75, 1.25]
@@ -221,9 +225,11 @@ class Crop(object):
 
         normstart = np.array(start).astype('float32') / np.array(imgs.shape[1:]) - 0.5
         normsize = np.array(crop_size).astype('float32') / np.array(imgs.shape[1:])
-        xx, yy, zz = np.meshgrid(np.linspace(normstart[0], normstart[0] + normsize[0], self.crop_size[0] / self.stride),
-                                 np.linspace(normstart[1], normstart[1] + normsize[1], self.crop_size[1] / self.stride),
-                                 np.linspace(normstart[2], normstart[2] + normsize[2], self.crop_size[2] / self.stride),
+        print('normstart %s' % normstart)
+        print('normsize %s' % normsize)
+        xx, yy, zz = np.meshgrid(np.linspace(normstart[0], normstart[0] + normsize[0], self.crop_size[0] // self.stride),
+                                 np.linspace(normstart[1], normstart[1] + normsize[1], self.crop_size[1] // self.stride),
+                                 np.linspace(normstart[2], normstart[2] + normsize[2], self.crop_size[2] // self.stride),
                                  indexing='ij')
         coord = np.concatenate([xx[np.newaxis, ...], yy[np.newaxis, ...], zz[np.newaxis, :]], 0).astype('float32')
 
