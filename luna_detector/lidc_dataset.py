@@ -128,6 +128,8 @@ def resolve_bbox(dcms, id2roi):
         roi = rois[0]
         mean = np.mean(roi, axis=0)
         nodule_coordinates.append([i, mean[0], mean[1]])
+    if len(nodule_coordinates) == 0:
+        print('Nodule coordinates empty list')
     return np.concatenate((np.mean(nodule_coordinates, axis=0), [5.0]))
 
 
