@@ -7,6 +7,8 @@ from torch.utils.data import Dataset
 import xml.etree.ElementTree as ET
 import pydicom as dicom
 import numpy as np
+from data_loader import LabelMapping
+from data_loader import Crop
 from numpy import array as na
 import cv2
 
@@ -105,11 +107,17 @@ def imread(image_path):
     return image, ds
 
 
+def resolve_bbox(imgs, nodules):
+    return [50.0, 50.0, 50.0, 5.0]
+
+
 class LIDCDataset(Dataset):
-    def __init__(self, data_path):
+    def __init__(self, data_path, config):
         self.data_path = data_path
         self.ids = []
         self.create_ids()
+        self.label_mapping = LabelMapping(config, 'test')
+        self.crop = Crop(config)
 
     def __getitem__(self, idx):
         dcms = []
@@ -126,8 +134,11 @@ class LIDCDataset(Dataset):
             dcms.append((image, dcm_data))
         dcms.sort(key=lambda dcm: dcm[1].SliceLocation)
         nodules = parseXML(parent_path)
+        imgs = na([dcm[0] for dcm in dcms])
+        bbox = resolve_bbox(imgs, nodules)
+        sample, target, bboxes, coord = self.crop(imgs, bbox, [bbox], isScale=False, isRand=True)
         # return na([dcm[0] for dcm in dcms]), na([make_mask(dcm[0], dcm[1].SOPInstanceUID, nodules) for dcm in dcms])
-        return torch.from_numpy(np.zeros([1, 64, 64, 64])), \
+        return torch.from_numpy(sample), \
                torch.from_numpy(np.zeros([16, 16, 16, 3, 5])), \
                np.zeros([3, 16, 16, 16])
 

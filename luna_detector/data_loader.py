@@ -106,6 +106,7 @@ class LungNodule3Ddetector(Dataset):
                 bboxes = self.sample_bboxes[randimid]
                 isScale = self.augtype['scale'] and (self.phase == 'train')
                 sample, target, bboxes, coord = self.crop(imgs, [], bboxes, isScale=False, isRand=True)
+            print(target)
             label = self.label_mapping(sample.shape[1:], target, bboxes)
             sample = (sample.astype(np.float32) - 128) / 128
             return torch.from_numpy(sample), torch.from_numpy(label), coord
@@ -194,7 +195,14 @@ class Crop(object):
     def __call__(self, imgs, target, bboxes, isScale=False, isRand=False):
         '''
         bboxes - array of 4 (3 coord and diameter)
+        target - the original bbox (array of 4)
+
+        return:
+        bboxes - array of bboxes, each bbox is an array of 4
+
         '''
+        print('crop input bboxes %s' % bboxes)
+        print('crop input target %s' % target)
         if isScale:
             radiusLim = [8., 100.]
             scaleLim = [0.75, 1.25]
