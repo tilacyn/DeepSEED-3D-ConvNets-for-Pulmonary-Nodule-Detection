@@ -105,10 +105,8 @@ class Net(nn.Module):
 
     def forward(self, x, coord):
 
-        # print('input shape {}'.format(x.shape))
-        print('x type %s' % x.dtype)
+        print('input shape {}'.format(x.shape))
         out = self.preBlock(x)  # 16
-        print('out type %s' % out.dtype)
         # print('preblock shape {}'.format(out.shape))
         out_pool, indices0 = self.maxpool1(out)
         # print('maxpool1 shape {} {}'.format(out_pool.shape, indices0.shape))
