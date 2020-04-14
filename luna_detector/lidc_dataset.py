@@ -86,6 +86,17 @@ def make_mask(image, image_id, nodules):
     # cv2.imwrite('kek1.jpg', filled_mask)
     return np.reshape(filled_mask, (height, width, 1))
 
+def create_map_from_nodules(nodules):
+    id2roi = {}
+    for nodule in nodules:
+        for roi in nodule['roi']:
+            id = roi['sop_uid']
+            if id not in id2roi:
+                id2roi[id] = []
+            id2roi[id].append(roi['xy'])
+    return id2roi
+
+def get_mask(image, image_id, nodules)
 
 def make_mask_for_rgb(image, image_id, nodules):
     filled_mask = image
@@ -107,8 +118,14 @@ def imread(image_path):
     return image, ds
 
 
-def resolve_bbox(imgs, nodules):
-    return [50.0, 50.0, 50.0, 5.0]
+def resolve_bbox(dcms, id2roi):
+    nodule_coordinates = []
+    for i, image, dcm_data in enumerate(dcms):
+        rois = id2roi[dcm_data.SOPInstanceUID]
+        roi = rois[0]
+        mean = np.mean(roi, axis=0)
+        nodule_coordinates.append([i, mean[0], mean[1]])
+    return np.concatenate((np.mean(nodule_coordinates, axis=0), [5.0]))
 
 
 class LIDCDataset(Dataset):
@@ -122,7 +139,6 @@ class LIDCDataset(Dataset):
     def __getitem__(self, idx):
         dcms = []
         parent_path = self.ids[idx]
-        # print('kek')
         for file in os.listdir(parent_path):
             if not file.endswith('dcm'):
                 continue
@@ -134,12 +150,16 @@ class LIDCDataset(Dataset):
             dcms.append((image, dcm_data))
         dcms.sort(key=lambda dcm: dcm[1].SliceLocation)
         nodules = parseXML(parent_path)
+        id2roi = create_map_from_nodules(nodules)
         imgs = na([dcm[0] for dcm in dcms])
-        bbox = resolve_bbox(imgs, nodules)
+        bbox = resolve_bbox(na(dcms), id2roi)
         sample, target, bboxes, coord = self.crop(imgs, bbox, [bbox], isScale=False, isRand=True)
-        # return na([dcm[0] for dcm in dcms]), na([make_mask(dcm[0], dcm[1].SOPInstanceUID, nodules) for dcm in dcms])
+
+        label = self.label_mapping(sample.shape[1:], target, bboxes)
+        sample = (sample.astype(np.float32) - 128) / 128
+
         return torch.from_numpy(sample), \
-               torch.from_numpy(np.zeros([16, 16, 16, 3, 5])), \
+               torch.from_numpy(label), \
                np.zeros([3, 16, 16, 16])
 
     def __len__(self):
