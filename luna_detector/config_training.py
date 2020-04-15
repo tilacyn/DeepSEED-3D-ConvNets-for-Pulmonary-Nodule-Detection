@@ -1,10 +1,11 @@
-config = {'luna_raw':'/data/LunaProj/LUNA/LUNAdata/lunafull/',
-          'luna_segment':'/data/LunaProj/LUNA/LUNAdata/seg-lungs-LUNA16/',
-          
-          'luna_data':'/data/LunaProj/LUNA/LUNAdata/lunadata/',
-          'preprocess_result_path':'/data/LunaProj/LUNA/LUNAdata/lunaprep/',       
-          
-          'luna_abbr':'./detector/labels/shorter.csv',
-          'luna_label':'./detector/labels/annos.csv',
-          'preprocessing_backend':'python'
-         }
+config = {'luna_raw': 'data/luna-raw',
+          'luna_segment': 'data/luna-segment/seg-lungs-LUNA16',
+          'lidc-npy' : 'data/lidc-npy',
+
+          'luna_data': 'data/luna-data',
+          'preprocess_result_path': 'data/preprocess-result-path',
+
+          'luna_abbr': './luna_detector/labels/shorter.csv',
+          'luna_label': 'luna_detector/labels/annos.csv',
+          'preprocessing_backend': 'python'
+          }
