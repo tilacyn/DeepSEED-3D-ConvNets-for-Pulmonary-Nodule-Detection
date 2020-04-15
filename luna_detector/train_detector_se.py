@@ -145,10 +145,10 @@ def main():
     for epoch in range(start_epoch, args.epochs + 1):
         train(train_loader, net, loss, epoch, optimizer, get_lr, save_dir)
         print("finsihed epoch {}".format(epoch))
-        valiloss = validate(val_loader, net, loss)
+        # valiloss = validate(val_loader, net, loss)
 
-        if bestLoss > valiloss:
-            bestLoss = valiloss
+        if bestLoss > -100:
+            # bestLoss = valiloss
             state_dict = net.module.state_dict()
             for key in state_dict.keys():
                 state_dict[key] = state_dict[key].cpu()
