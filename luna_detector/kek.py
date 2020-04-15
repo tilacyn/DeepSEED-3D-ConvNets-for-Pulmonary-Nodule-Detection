@@ -3,6 +3,7 @@ from importlib import import_module
 
 import numpy as np
 from data_loader import LungNodule3Ddetector
+from lidc_dataset import LIDCDataset
 
 from config_training import config as config_training
 
@@ -20,6 +21,8 @@ print('creating model')
 config, net, loss, get_pbb = model.get_model()
 print('created model')
 
-ds = LungNodule3Ddetector(data_dir, idcs, config, phase='train')
+# ds = LungNodule3Ddetector(data_dir, idcs, config, phase='train')
+
+ds = LIDCDataset(data_dir, config)
 
 a = ds[0]
