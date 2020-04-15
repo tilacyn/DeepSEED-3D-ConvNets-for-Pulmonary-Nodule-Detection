@@ -181,7 +181,7 @@ def train(data_loader, net, loss, epoch, optimizer, get_lr, save_dir):
         coord = coord.type(torch.cuda.FloatTensor)
 
         output = net(data, coord)
-        print('output shape: {}'.format(output.shape))
+        # print('output shape: {}'.format(output.shape))
 
         loss_output = loss(output, target)
         optimizer.zero_grad()
