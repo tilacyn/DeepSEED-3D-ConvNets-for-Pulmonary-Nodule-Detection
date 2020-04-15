@@ -133,6 +133,7 @@ def resolve_bbox(dcms, id2roi):
         nodule_coordinates.append([i, mean[0], mean[1]])
     if len(nodule_coordinates) == 0:
         print('Nodule coordinates empty list')
+        raise ValueError('invalid bbox')
     return np.concatenate((np.mean(nodule_coordinates, axis=0), [5.0]))
 
 
@@ -172,7 +173,10 @@ class LIDCDataset(Dataset):
         # print(id2roi)
         imgs = na([dcm[0] for dcm in dcms])
         imgs = imgs[np.newaxis, :]
-        bbox = resolve_bbox(na(dcms), id2roi)
+        try:
+            bbox = resolve_bbox(na(dcms), id2roi)
+        except:
+            return self[idx - 1]
         # print('imgs shape: {}'.format(imgs.shape))
         # print('target: {}'.format(target))
         # print('bboxes: {}'.format(bboxes))
