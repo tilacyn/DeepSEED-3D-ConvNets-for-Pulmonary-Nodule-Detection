@@ -187,6 +187,7 @@ class LIDCDataset(Dataset):
 
     def save_npy(self, ids_len):
         for i in range(ids_len):
+            print('processing %d' % i)
             sample, label, coord = self[i]
             sample = sample.numpy()
             label = label.numpy()
