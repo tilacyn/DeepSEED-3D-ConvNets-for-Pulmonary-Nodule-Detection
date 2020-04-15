@@ -163,8 +163,8 @@ class LIDCDataset(Dataset):
         bbox = resolve_bbox(na(dcms), id2roi)
         # print('imgs shape: {}'.format(imgs.shape))
         sample, target, bboxes, coord = self.crop(imgs, bbox, [bbox], isScale=False)
-        print('target: {}'.format(target))
-        print('bboxes: {}'.format(bboxes))
+        # print('target: {}'.format(target))
+        # print('bboxes: {}'.format(bboxes))
         label = self.label_mapping(sample.shape[1:], target, bboxes)
         sample = (sample.astype(np.float32) - 128) / 128
 
