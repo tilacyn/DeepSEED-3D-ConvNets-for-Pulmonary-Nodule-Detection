@@ -195,6 +195,10 @@ class LIDCDataset(Dataset):
             load_label_path = opjoin(self.lidc_npy_path, 'label_%d.npy' % i)
             load_coord_path = opjoin(self.lidc_npy_path, 'coord_%d.npy' % i)
 
+            for path in [load_coord_path, load_label_path, load_sample_path]:
+                if not os.path.exists(path):
+                    open(path, 'a').close()
+
             np.save(load_sample_path, sample)
             np.save(load_label_path, label)
             np.save(load_coord_path, coord)
