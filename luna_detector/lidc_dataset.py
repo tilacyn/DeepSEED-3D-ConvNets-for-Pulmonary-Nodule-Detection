@@ -185,8 +185,8 @@ class LIDCDataset(Dataset):
                torch.from_numpy(label), \
                coord
 
-    def save_npy(self, ids_len):
-        for i in range(ids_len):
+    def save_npy(self, start, end):
+        for i in range(start, end):
             print('processing %d' % i)
             sample, label, coord = self[i]
             sample = sample.numpy()
