@@ -217,6 +217,8 @@ class Crop(object):
         bboxes = np.copy(bboxes)
 
         start = []
+        print('isRand: {}'.format(isRand))
+        print('target (in crop call method): {}'.format(target))
         for i in range(3):
             if not isRand:
                 r = target[3] / 2
