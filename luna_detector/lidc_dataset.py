@@ -1,4 +1,5 @@
 import glob
+import json
 import os
 from os.path import join as opjoin
 
@@ -174,15 +175,17 @@ class LIDCDataset(Dataset):
         return len(self.ids)
 
     def create_ids(self):
-        for root, _, files in os.walk(self.data_path):
-            if glob.glob(opjoin(self.data_path, root, '*xml')):
-                nodules = parseXML(opjoin(self.data_path, root))
-                id2roi = create_map_from_nodules(nodules)
-                if len(id2roi) == 0:
-                    continue
-                self.ids.append(root)
-            if len(self.ids) > 500:
-                break
+        # for root, _, files in os.walk(self.data_path):
+        #     if glob.glob(opjoin(self.data_path, root, '*xml')):
+        #         nodules = parseXML(opjoin(self.data_path, root))
+        #         id2roi = create_map_from_nodules(nodules)
+        #         if len(id2roi) == 0:
+        #             continue
+        #         self.ids.append(root)
+        #     if len(self.ids) > 500:
+        #         break
+        with open('index.json', 'r') as read_file:
+            return json.load(read_file)
 
 
 def has_slice_location(dcm_data):
@@ -192,3 +195,16 @@ def has_slice_location(dcm_data):
     except:
         # print('No Slice Location')
         return False
+
+
+def create_index(data_path):
+    ids = []
+    for root, _, files in os.walk(data_path):
+        if glob.glob(opjoin(data_path, root, '*xml')):
+            nodules = parseXML(opjoin(data_path, root))
+            id2roi = create_map_from_nodules(nodules)
+            if len(id2roi) == 0:
+                continue
+            ids.append(root)
+    with open('index.json', 'w') as write_file:
+        json.dump(ids, write_file)
