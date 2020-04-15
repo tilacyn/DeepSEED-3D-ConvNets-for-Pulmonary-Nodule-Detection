@@ -76,6 +76,7 @@ def main():
         checkpoint = torch.load(save_dir + 'detector_' + args.resume)
         start_epoch = checkpoint['epoch']
         net.load_state_dict(checkpoint['state_dict'])
+        net.load_weigths
 
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
@@ -192,7 +193,7 @@ def train(data_loader, net, loss, epoch, optimizer, get_lr, save_dir):
         metrics.append(loss_output)
 
         print("finished iteration {} with loss {}.".format(i, loss_output[0]))
-        if i == 200:
+        if i == 50:
             break
 
     end_time = time.time()
