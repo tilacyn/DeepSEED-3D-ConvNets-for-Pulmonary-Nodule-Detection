@@ -13,6 +13,8 @@ from data_loader import Crop
 from numpy import array as na
 import cv2
 
+from config_training import config as config_training
+
 from PIL import Image, ImageDraw
 
 from matplotlib import pyplot as plt
@@ -135,14 +137,24 @@ def resolve_bbox(dcms, id2roi):
 
 
 class LIDCDataset(Dataset):
-    def __init__(self, data_path, config):
+    def __init__(self, data_path, config, load=False):
         self.data_path = data_path
         self.ids = []
         self.create_ids()
         self.label_mapping = LabelMapping(config, 'train')
         self.crop = Crop(config)
+        self.load = load
+        self.lidc_npy_path = config_training['lidc-npy']
 
     def __getitem__(self, idx):
+        if self.load:
+            load_sample_path = opjoin(self.lidc_npy_path, 'sample_%d.npy' % idx)
+            load_label_path = opjoin(self.lidc_npy_path, 'label_%d.npy' % idx)
+            load_coord_path = opjoin(self.lidc_npy_path, 'coord_%d.npy' % idx)
+            sample = np.load(load_sample_path)
+            label = np.load(load_label_path)
+            coord = np.load(load_coord_path)
+            return torch.from_numpy(sample), torch.from_numpy(label), coord
         dcms = []
         parent_path = self.ids[idx]
         for file in os.listdir(parent_path):
@@ -162,15 +174,30 @@ class LIDCDataset(Dataset):
         imgs = imgs[np.newaxis, :]
         bbox = resolve_bbox(na(dcms), id2roi)
         # print('imgs shape: {}'.format(imgs.shape))
-        sample, target, bboxes, coord = self.crop(imgs, bbox, [bbox], isScale=False)
         # print('target: {}'.format(target))
         # print('bboxes: {}'.format(bboxes))
+
+        sample, target, bboxes, coord = self.crop(imgs, bbox, [bbox], isScale=False)
         label = self.label_mapping(sample.shape[1:], target, bboxes)
         sample = (sample.astype(np.float32) - 128) / 128
 
         return torch.from_numpy(sample), \
                torch.from_numpy(label), \
                coord
+
+    def save_npy(self, ids_len):
+        for i in range(ids_len):
+            sample, label, coord = self[i]
+            sample = sample.numpy()
+            label = label.numpy()
+
+            load_sample_path = opjoin(self.lidc_npy_path, 'sample_%d.npy' % i)
+            load_label_path = opjoin(self.lidc_npy_path, 'label_%d.npy' % i)
+            load_coord_path = opjoin(self.lidc_npy_path, 'coord_%d.npy' % i)
+
+            np.save(load_sample_path, sample)
+            np.save(load_label_path, label)
+            np.save(load_coord_path, coord)
 
     def __len__(self):
         return len(self.ids)
