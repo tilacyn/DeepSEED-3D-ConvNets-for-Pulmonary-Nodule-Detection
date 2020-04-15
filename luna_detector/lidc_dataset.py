@@ -218,7 +218,7 @@ class LIDCDataset(Dataset):
         #     if len(self.ids) > 500:
         #         break
         with open('index.json', 'r') as read_file:
-            self.ids = json.load(read_file)[:50]
+            self.ids = json.load(read_file)
 
 
 def has_slice_location(dcm_data):
