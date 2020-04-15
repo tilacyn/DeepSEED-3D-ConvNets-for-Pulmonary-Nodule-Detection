@@ -192,7 +192,7 @@ def train(data_loader, net, loss, epoch, optimizer, get_lr, save_dir):
         metrics.append(loss_output)
 
         print("finished iteration {} with loss {}.".format(i, loss_output[0]))
-        if i == 20:
+        if i == 200:
             break
 
     end_time = time.time()
