@@ -171,7 +171,7 @@ def train(data_loader, net, loss, epoch, optimizer, get_lr, save_dir):
         param_group['lr'] = lr
 
     metrics = []
-    for i, (data, target, coord) in enumerate(data_loader)[:50]:
+    for i, (data, target, coord) in enumerate(data_loader):
         data = torch.autograd.Variable(data.cuda(non_blocking=True))
         target = torch.autograd.Variable(target.cuda(non_blocking=True))
         coord = torch.autograd.Variable(coord.cuda(non_blocking=True))
@@ -192,6 +192,8 @@ def train(data_loader, net, loss, epoch, optimizer, get_lr, save_dir):
         metrics.append(loss_output)
 
         print("finished iteration {} with loss {}.".format(i, loss_output[0]))
+        if i == 50:
+            break
 
     end_time = time.time()
 
