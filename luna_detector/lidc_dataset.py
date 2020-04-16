@@ -184,14 +184,14 @@ class LIDCDataset(Dataset):
         # print('target: {}'.format(target))
         # print('bboxes: {}'.format(bboxes))
 
-        sample, target, bboxes, coord = self.crop(imgs, bbox, [bbox], isScale=False, isRand=self.isRand)
+        sample, target, bboxes, coord, real_target = self.crop(imgs, bbox, [bbox], isScale=False, isRand=self.isRand)
         label = self.label_mapping(sample.shape[1:], target, bboxes)
         sample = (sample.astype(np.float32) - 128) / 128
 
         return torch.from_numpy(sample), \
                torch.from_numpy(label), \
                coord, \
-               target
+               real_target
 
     def save_npy(self, start, end):
         for i in range(start, end):

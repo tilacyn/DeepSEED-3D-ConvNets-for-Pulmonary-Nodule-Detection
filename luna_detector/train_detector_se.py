@@ -108,20 +108,6 @@ def main():
         sidelen = 144
 
         split_comber = SplitComb(sidelen, config['max_stride'], config['stride'], margin, config['pad_value'])
-        dataset = LungNodule3Ddetector(
-            datadir,
-            luna_test,
-            config,
-            phase='test',
-            split_comber=split_comber)
-        test_loader = DataLoader(
-            dataset,
-            batch_size=1,
-            shuffle=False,
-            num_workers=args.workers,
-            collate_fn=collate,
-            pin_memory=False)
-
         test(test_loader, net, get_pbb, save_dir, config)
         return
 

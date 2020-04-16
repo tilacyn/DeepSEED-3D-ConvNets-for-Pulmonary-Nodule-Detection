@@ -227,7 +227,6 @@ class Crop(object):
             else:
                 s = np.max([imgs.shape[i + 1] - crop_size[i] / 2, imgs.shape[i + 1] / 2 + bound_size])
                 e = np.min([crop_size[i] / 2, imgs.shape[i + 1] / 2 - bound_size])
-                # target = np.array([np.nan, np.nan, np.nan, np.nan])
             #     randomized crops including target (or not including depending on isRand
             if s > e:
                 start.append(int(np.random.randint(e, s)))  # !
@@ -244,8 +243,7 @@ class Crop(object):
                                  indexing='ij')
         coord = np.concatenate([xx[np.newaxis, ...], yy[np.newaxis, ...], zz[np.newaxis, :]], 0).astype('float32')
 
-        pad = []
-        pad.append([0, 0])
+        pad = [[0, 0]]
         for i in range(3):
             leftpad = max(0, -start[i])
             rightpad = max(0, start[i] + crop_size[i] - imgs.shape[i + 1])
@@ -277,7 +275,10 @@ class Crop(object):
             for i in range(len(bboxes)):
                 for j in range(4):
                     bboxes[i][j] = bboxes[i][j] * scale
-        return crop, target, bboxes, coord
+        real_target = target
+        if isRand:
+            target = np.array([np.nan, np.nan, np.nan, np.nan])
+        return crop, target, bboxes, coord, real_target
 
 
 class LabelMapping(object):
@@ -327,6 +328,7 @@ class LabelMapping(object):
             label[:, :, :, :, 0] = 0
             label[neg_z, neg_h, neg_w, neg_a, 0] = -1
 
+        # if the whole sample is negative then target[0] is nan so no further label mapping?
         if np.isnan(target[0]):
             return label
         iz, ih, iw, ia = [], [], [], []
