@@ -138,12 +138,13 @@ def resolve_bbox(dcms, id2roi):
 
 
 class LIDCDataset(Dataset):
-    def __init__(self, data_path, config, stard_idx, end_idx, load=False, isRand=False):
+    def __init__(self, data_path, config, stard_idx, end_idx, load=False, isRand=False, phase='train'):
         self.data_path = data_path
         self.ids = []
         self.start_idx = stard_idx
         self.end_idx = end_idx
         self.create_ids()
+        self.phase = phase
         self.label_mapping = LabelMapping(config, 'train')
         self.crop = Crop(config)
         self.load = load
@@ -151,38 +152,29 @@ class LIDCDataset(Dataset):
         self.isRand = isRand
 
     def __getitem__(self, idx):
+        if self.phase == 'test':
+            if np.random.randint(0, 2) == 0:
+                sample, label, coord = self.get_data_from_npy(idx)
+                return torch.from_numpy(sample), torch.from_numpy(label), coord, None
+            else:
+                imgs, bbox = self.get_data_from_dcm(idx)
+                sample, target, bboxes, coord, real_target = self.crop(imgs, bbox, [bbox], isScale=False, isRand=True)
+
+                label = self.label_mapping(sample.shape[1:], target, bboxes)
+                sample = (sample.astype(np.float32) - 128) / 128
+
+                return torch.from_numpy(sample), \
+                       torch.from_numpy(label), \
+                       coord, \
+                       real_target
+
         if self.load:
-            load_sample_path = opjoin(self.lidc_npy_path, 'sample_%d.npy' % idx)
-            load_label_path = opjoin(self.lidc_npy_path, 'label_%d.npy' % idx)
-            load_coord_path = opjoin(self.lidc_npy_path, 'coord_%d.npy' % idx)
-            sample = np.load(load_sample_path)
-            label = np.load(load_label_path)
-            coord = np.load(load_coord_path)
+            sample, label, coord = self.get_data_from_npy(idx)
             return torch.from_numpy(sample), torch.from_numpy(label), coord
-        dcms = []
-        parent_path = self.ids[idx]
-        for file in os.listdir(parent_path):
-            if not file.endswith('dcm'):
-                continue
-            image, dcm_data = imread(opjoin(parent_path, file))
-            # image = np.reshape(image, (image.shape[0], image.shape[1], 1))
-            # image = np.repeat(image, 3, axis=2)
-            if not has_slice_location(dcm_data):
-                continue
-            dcms.append((image, dcm_data))
-        dcms.sort(key=lambda dcm: dcm[1].SliceLocation)
-        nodules = parseXML(parent_path)
-        id2roi = create_map_from_nodules(nodules)
-        # print(id2roi)
-        imgs = na([dcm[0] for dcm in dcms])
-        imgs = imgs[np.newaxis, :]
         try:
-            bbox = resolve_bbox(na(dcms), id2roi)
+            imgs, bbox = self.get_data_from_dcm(idx)
         except:
             return self[idx - 1]
-        # print('imgs shape: {}'.format(imgs.shape))
-        # print('target: {}'.format(target))
-        # print('bboxes: {}'.format(bboxes))
 
         sample, target, bboxes, coord, real_target = self.crop(imgs, bbox, [bbox], isScale=False, isRand=self.isRand)
         label = self.label_mapping(sample.shape[1:], target, bboxes)
@@ -192,6 +184,33 @@ class LIDCDataset(Dataset):
                torch.from_numpy(label), \
                coord, \
                real_target
+
+    def get_data_from_dcm(self, idx):
+        dcms = []
+        parent_path = self.ids[idx]
+        for file in os.listdir(parent_path):
+            if not file.endswith('dcm'):
+                continue
+            image, dcm_data = imread(opjoin(parent_path, file))
+            if not has_slice_location(dcm_data):
+                continue
+            dcms.append((image, dcm_data))
+        dcms.sort(key=lambda dcm: dcm[1].SliceLocation)
+        nodules = parseXML(parent_path)
+        id2roi = create_map_from_nodules(nodules)
+        imgs = na([dcm[0] for dcm in dcms])
+        imgs = imgs[np.newaxis, :]
+        bbox = resolve_bbox(na(dcms), id2roi)
+        return imgs, bbox
+
+    def get_data_from_npy(self, idx):
+        load_sample_path = opjoin(self.lidc_npy_path, 'sample_%d.npy' % idx)
+        load_label_path = opjoin(self.lidc_npy_path, 'label_%d.npy' % idx)
+        load_coord_path = opjoin(self.lidc_npy_path, 'coord_%d.npy' % idx)
+        sample = np.load(load_sample_path)
+        label = np.load(load_label_path)
+        coord = np.load(load_coord_path)
+        return sample, label, coord
 
     def save_npy(self, start, end):
         for i in range(start, end):
