@@ -292,7 +292,7 @@ class FocalLoss(nn.Module):
             classify_loss = classify_loss / (len(pos_prob) + len(neg_prob))
             pos_correct = (pos_prob.data >= 0.5).sum()
             pos_total = len(pos_prob)
-
+            print('len(pos) > 0')
         else:
             regress_losses = [0, 0, 0, 0]
             classify_loss = self.classify_loss.forward(
@@ -301,6 +301,8 @@ class FocalLoss(nn.Module):
             pos_correct = 0
             pos_total = 0
             regress_losses_data = [0, 0, 0, 0]
+            print('else')
+        print(classify_loss)
         classify_loss_data = classify_loss.item()
 
         loss = classify_loss
