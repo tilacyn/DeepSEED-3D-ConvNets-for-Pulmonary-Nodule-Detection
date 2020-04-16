@@ -138,9 +138,11 @@ def resolve_bbox(dcms, id2roi):
 
 
 class LIDCDataset(Dataset):
-    def __init__(self, data_path, config, load=False):
+    def __init__(self, data_path, config, stard_idx, end_idx, load=False):
         self.data_path = data_path
         self.ids = []
+        self.start_idx = stard_idx
+        self.end_idx = end_idx
         self.create_ids()
         self.label_mapping = LabelMapping(config, 'train')
         self.crop = Crop(config)
@@ -223,6 +225,7 @@ class LIDCDataset(Dataset):
         #         break
         with open('index.json', 'r') as read_file:
             self.ids = json.load(read_file)
+            self.ids = self.ids[self.start_idx:self.end_idx]
 
 
 def has_slice_location(dcm_data):

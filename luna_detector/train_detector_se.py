@@ -59,7 +59,6 @@ parser.add_argument('--n_test', default=8, type=int, metavar='N',
 def main():
     global args
     args = parser.parse_args()
-    bestLoss = 1000
 
     torch.manual_seed(0)
     torch.cuda.set_device(0)
@@ -76,7 +75,6 @@ def main():
         checkpoint = torch.load(save_dir + 'detector_' + args.resume)
         start_epoch = checkpoint['epoch']
         net.load_state_dict(checkpoint['state_dict'])
-        net.load_weigths
 
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
@@ -122,13 +120,13 @@ def main():
         return
 
     # dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
-    dataset = LIDCDataset(datadir, config, load=True)
-    train_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
+    dataset = LIDCDataset(datadir, config, 0, 120, load=True)
+    train_loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=args.workers,
                               pin_memory=True)
 
     # dataset = LungNodule3Ddetector(datadir, luna_test, config, phase='val')
-    dataset = LIDCDataset(datadir, config)
-    val_loader = DataLoader(dataset, batch_size=16, shuffle=False, num_workers=args.workers, pin_memory=True)
+    dataset = LIDCDataset(datadir, config, 120, 160, load=True)
+    val_loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=args.workers, pin_memory=True)
 
     optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=args.weight_decay)
 
@@ -143,13 +141,14 @@ def main():
             lr = 0.01 * args.lr
         return lr
 
+    best_loss = 100
     for epoch in range(start_epoch, args.epochs + 1):
         train(train_loader, net, loss, epoch, optimizer, get_lr, save_dir)
         print("finsihed epoch {}".format(epoch))
-        # valiloss = validate(val_loader, net, loss)
+        vali_loss = validate(val_loader, net, loss)
 
-        if bestLoss > -100:
-            # bestLoss = valiloss
+        if best_loss > vali_loss:
+            best_loss = vali_loss
             state_dict = net.module.state_dict()
             for key in state_dict.keys():
                 state_dict[key] = state_dict[key].cpu()
