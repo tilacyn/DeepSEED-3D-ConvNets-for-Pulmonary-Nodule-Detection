@@ -138,7 +138,7 @@ def resolve_bbox(dcms, id2roi):
 
 
 class LIDCDataset(Dataset):
-    def __init__(self, data_path, config, stard_idx, end_idx, load=False):
+    def __init__(self, data_path, config, stard_idx, end_idx, load=False, isRand=False):
         self.data_path = data_path
         self.ids = []
         self.start_idx = stard_idx
@@ -148,6 +148,7 @@ class LIDCDataset(Dataset):
         self.crop = Crop(config)
         self.load = load
         self.lidc_npy_path = config_training['lidc-npy']
+        self.isRand = isRand
 
     def __getitem__(self, idx):
         if self.load:
@@ -183,7 +184,7 @@ class LIDCDataset(Dataset):
         # print('target: {}'.format(target))
         # print('bboxes: {}'.format(bboxes))
 
-        sample, target, bboxes, coord = self.crop(imgs, bbox, [bbox], isScale=False)
+        sample, target, bboxes, coord = self.crop(imgs, bbox, [bbox], isScale=False, isRand=self.isRand)
         label = self.label_mapping(sample.shape[1:], target, bboxes)
         sample = (sample.astype(np.float32) - 128) / 128
 
