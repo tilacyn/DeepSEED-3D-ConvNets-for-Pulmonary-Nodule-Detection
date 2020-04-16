@@ -277,7 +277,7 @@ class FocalLoss(nn.Module):
 
         # print(neg_output.shape) # neg output : (2)
         neg_prob = self.sigmoid(neg_output)
-        printv(neg_prob.shape, self.config) # neg
+        # printv(neg_prob.shape, self.config) # neg
 
         if len(pos_output) > 0:
             # print(pos_output.shape)
