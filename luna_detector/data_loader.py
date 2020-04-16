@@ -227,7 +227,7 @@ class Crop(object):
             else:
                 s = np.max([imgs.shape[i + 1] - crop_size[i] / 2, imgs.shape[i + 1] / 2 + bound_size])
                 e = np.min([crop_size[i] / 2, imgs.shape[i + 1] / 2 - bound_size])
-                target = np.array([np.nan, np.nan, np.nan, np.nan])
+                # target = np.array([np.nan, np.nan, np.nan, np.nan])
             #     randomized crops including target (or not including depending on isRand
             if s > e:
                 start.append(int(np.random.randint(e, s)))  # !
