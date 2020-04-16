@@ -274,7 +274,9 @@ class FocalLoss(nn.Module):
         if self.num_hard > 0 and train:
             neg_output, neg_labels = hard_mining(neg_output, neg_labels, self.num_hard * batch_size)
 
+        print(neg_output.shape)
         neg_prob = self.sigmoid(neg_output)
+        print(neg_prob.shape)
 
         if len(pos_output) > 0:
             print(pos_output.shape)
