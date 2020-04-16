@@ -273,9 +273,8 @@ class FocalLoss(nn.Module):
 
         if self.num_hard > 0 and train:
             neg_output, neg_labels = hard_mining(neg_output, neg_labels, self.num_hard * batch_size)
-        neg_prob = self.sigmoid(neg_output)
 
-        print('pos output {}'.format(pos_output.shape))
+        neg_prob = self.sigmoid(neg_output)
 
         if len(pos_output) > 0:
             pos_prob = self.sigmoid(pos_output[:, 0])
@@ -306,6 +305,11 @@ class FocalLoss(nn.Module):
             print('else')
         print(classify_loss)
         classify_loss_data = classify_loss.item()
+
+        print('pos output {}'.format(pos_output.shape))
+        print('neg output {}'.format(pos_output.shape))
+        print('pos prob {}'.format(pos_prob.shape))
+        print('pos output {}'.format(neg_prob.shape))
 
         loss = classify_loss
         for regress_loss in regress_losses:

@@ -214,15 +214,6 @@ class LIDCDataset(Dataset):
         return len(self.ids)
 
     def create_ids(self):
-        # for root, _, files in os.walk(self.data_path):
-        #     if glob.glob(opjoin(self.data_path, root, '*xml')):
-        #         nodules = parseXML(opjoin(self.data_path, root))
-        #         id2roi = create_map_from_nodules(nodules)
-        #         if len(id2roi) == 0:
-        #             continue
-        #         self.ids.append(root)
-        #     if len(self.ids) > 500:
-        #         break
         with open('index.json', 'r') as read_file:
             self.ids = json.load(read_file)
             self.ids = self.ids[self.start_idx:self.end_idx]
