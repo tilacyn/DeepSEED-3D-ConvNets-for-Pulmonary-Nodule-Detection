@@ -307,9 +307,9 @@ class FocalLoss(nn.Module):
         classify_loss_data = classify_loss.item()
 
         print('pos output {}'.format(pos_output.shape))
-        print('neg output {}'.format(pos_output.shape))
+        print('neg output {}'.format(neg_output.shape))
         print('pos prob {}'.format(pos_prob.shape))
-        print('pos output {}'.format(neg_prob.shape))
+        print('neg prob {}'.format(neg_prob.shape))
 
         loss = classify_loss
         for regress_loss in regress_losses:
