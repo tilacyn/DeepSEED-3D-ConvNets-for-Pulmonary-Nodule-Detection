@@ -90,7 +90,6 @@ def main():
     loss = loss.cuda()
     cudnn.benchmark = True
     net = DataParallel(net)
-    # datadir = config_training['preprocess_result_path']
     datadir = '/content/drive/My Drive/dsb2018_topcoders/data'
 
     luna_train = np.load('./luna_train.npy')
@@ -120,12 +119,12 @@ def main():
         return
 
     # dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
-    dataset = LIDCDataset(datadir, config, 0, 200, load=True)
+    dataset = LIDCDataset(datadir, config, 0, 350, load=True)
     train_loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=args.workers,
                               pin_memory=True)
 
     # dataset = LungNodule3Ddetector(datadir, luna_test, config, phase='val')
-    dataset = LIDCDataset(datadir, config, 200, 250, load=True)
+    dataset = LIDCDataset(datadir, config, 350, 430, load=True)
     val_loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=args.workers, pin_memory=True)
 
     optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=args.weight_decay)

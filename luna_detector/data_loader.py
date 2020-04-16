@@ -193,14 +193,14 @@ class Crop(object):
         self.pad_value = config['pad_value']
 
     def __call__(self, imgs, target, bboxes, isScale=False, isRand=False):
-        '''
+        """
         bboxes - array of 4 (3 coord and diameter)
         target - the original bbox (array of 4)
+        isRand - should we take target into account when creating crop or not
 
         return:
         bboxes - array of bboxes, each bbox is an array of 4
-
-        '''
+        """
         # print('crop input bboxes %s' % bboxes)
         # print('crop input target %s' % target)
         if isScale:
@@ -228,6 +228,7 @@ class Crop(object):
                 s = np.max([imgs.shape[i + 1] - crop_size[i] / 2, imgs.shape[i + 1] / 2 + bound_size])
                 e = np.min([crop_size[i] / 2, imgs.shape[i + 1] / 2 - bound_size])
                 target = np.array([np.nan, np.nan, np.nan, np.nan])
+            #     randomized crops including target (or not including depending on isRand
             if s > e:
                 start.append(int(np.random.randint(e, s)))  # !
             else:
