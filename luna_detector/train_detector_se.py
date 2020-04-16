@@ -127,6 +127,7 @@ def main():
 
     # dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
     dataset = LIDCDataset(datadir, config, 0, args.train_len, load=True)
+    print(args.batch_size)
     train_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
                               pin_memory=True)
 
