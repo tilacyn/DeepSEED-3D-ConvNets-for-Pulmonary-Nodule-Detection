@@ -277,7 +277,9 @@ class FocalLoss(nn.Module):
         neg_prob = self.sigmoid(neg_output)
 
         if len(pos_output) > 0:
+            print(pos_output.shape)
             pos_prob = self.sigmoid(pos_output[:, 0])
+            print(pos_prob.shape)
             pz, ph, pw, pd = pos_output[:, 1], pos_output[:, 2], pos_output[:, 3], pos_output[:, 4]
             lz, lh, lw, ld = pos_labels[:, 1], pos_labels[:, 2], pos_labels[:, 3], pos_labels[:, 4]
 
