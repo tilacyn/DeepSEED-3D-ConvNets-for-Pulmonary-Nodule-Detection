@@ -191,9 +191,7 @@ def train(data_loader, net, loss, epoch, optimizer, get_lr, save_dir):
         loss_output[0] = loss_output[0].item()
         metrics.append(loss_output)
 
-        print("finished iteration {} with loss {}.".format(i, loss_output[0]))
-        if i == 50:
-            break
+        # print("finished iteration {} with loss {}.".format(i, loss_output[0]))
 
     end_time = time.time()
 
