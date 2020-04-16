@@ -277,7 +277,7 @@ class FocalLoss(nn.Module):
 
         # print(neg_output.shape) # neg output : (2)
         neg_prob = self.sigmoid(neg_output)
-        # print(neg_prob.shape) # neg
+        printv(neg_prob.shape, self.config) # neg
 
         if len(pos_output) > 0:
             # print(pos_output.shape)
@@ -471,3 +471,7 @@ def topkpbb(pbb, lbb, nms_th, detect_th, topk=30):
     else:
         fp = []
     return tp, fp, fn
+
+def printv(a, config):
+    if config['verbose']:
+        print(a)

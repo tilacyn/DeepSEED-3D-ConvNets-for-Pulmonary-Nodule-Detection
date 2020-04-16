@@ -58,6 +58,8 @@ parser.add_argument('--train_len', default=400, type=int, metavar='N',
                     help='number of gpu for test')
 parser.add_argument('--val_len', default=50, type=int, metavar='N',
                     help='number of gpu for test')
+parser.add_argument('--verbose', default=False, type=bool, metavar='N',
+                    help='number of gpu for test')
 
 
 def main():
@@ -73,6 +75,7 @@ def main():
     print('created model')
     start_epoch = args.start_epoch
     save_dir = args.save_dir
+    config['verbose'] = args.verbose
 
     if args.resume:
         print("=> loading checkpoint '{}'".format(args.resume))
@@ -124,11 +127,11 @@ def main():
 
     # dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
     dataset = LIDCDataset(datadir, config, 0, args.train_len, load=True)
-    train_loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=args.workers,
+    train_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
                               pin_memory=True)
 
     dataset = LIDCDataset(datadir, config, args.train_len, args.train_len + args.val_len, load=True)
-    val_loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=args.workers, pin_memory=True)
+    val_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers, pin_memory=True)
 
     optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=args.weight_decay)
 
