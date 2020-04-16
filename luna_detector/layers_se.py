@@ -318,7 +318,7 @@ class FocalLoss(nn.Module):
         neg_correct = (neg_prob.data < 0.5).sum()
         neg_total = len(neg_prob)
 
-        return [loss, classify_loss_data] + regress_losses_data + [pos_correct, pos_total, neg_correct, neg_total], neg_output
+        return [loss, classify_loss_data] + regress_losses_data + [pos_correct, pos_total, neg_correct, neg_total]
 
 
 class GetPBB(object):
