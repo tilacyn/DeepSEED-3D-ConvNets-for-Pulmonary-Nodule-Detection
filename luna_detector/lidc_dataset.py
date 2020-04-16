@@ -189,7 +189,8 @@ class LIDCDataset(Dataset):
 
         return torch.from_numpy(sample), \
                torch.from_numpy(label), \
-               coord
+               coord, \
+               target
 
     def save_npy(self, start, end):
         for i in range(start, end):
