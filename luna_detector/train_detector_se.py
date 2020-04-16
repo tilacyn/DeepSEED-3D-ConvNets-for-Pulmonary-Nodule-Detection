@@ -120,12 +120,12 @@ def main():
         return
 
     # dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
-    dataset = LIDCDataset(datadir, config, 0, 120, load=True)
+    dataset = LIDCDataset(datadir, config, 0, 200, load=True)
     train_loader = DataLoader(dataset, batch_size=1, shuffle=True, num_workers=args.workers,
                               pin_memory=True)
 
     # dataset = LungNodule3Ddetector(datadir, luna_test, config, phase='val')
-    dataset = LIDCDataset(datadir, config, 120, 160, load=True)
+    dataset = LIDCDataset(datadir, config, 200, 250, load=True)
     val_loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=args.workers, pin_memory=True)
 
     optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=args.weight_decay)

@@ -190,7 +190,7 @@ class Loss(nn.Module):
                 neg_prob, neg_labels + 1)
             pos_correct = (pos_prob.data >= 0.5).sum()
             pos_total = len(pos_prob)
-
+            print('len(pos) > 0')
         else:
             regress_losses = [0, 0, 0, 0]
             classify_loss = 0.5 * self.classify_loss(
@@ -198,8 +198,9 @@ class Loss(nn.Module):
             pos_correct = 0
             pos_total = 0
             regress_losses_data = [0, 0, 0, 0]
+            print('else')
         classify_loss_data = classify_loss.item()
-
+        print(classify_loss)
         loss = classify_loss
         for regress_loss in regress_losses:
             loss += regress_loss
