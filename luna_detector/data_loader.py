@@ -202,7 +202,7 @@ class Crop(object):
         bboxes - array of bboxes, each bbox is an array of 4
         """
         # print('crop input bboxes %s' % bboxes)
-        # print('crop input target %s' % target)
+        print('crop input target %s' % target)
         if isScale:
             radiusLim = [8., 100.]
             scaleLim = [0.75, 1.25]
