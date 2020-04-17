@@ -139,6 +139,7 @@ def resolve_bbox(dcms, id2roi):
 
 NPY_LOAD_MARKER = -5
 
+
 class LIDCDataset(Dataset):
     def __init__(self, data_path, config, stard_idx, end_idx, load=False, isRand=False, phase='train'):
         self.data_path = data_path
@@ -155,20 +156,17 @@ class LIDCDataset(Dataset):
 
     def __getitem__(self, idx):
         if self.phase == 'test':
-            if np.random.randint(0, 2) == 0:
-                sample, label, coord = self.get_data_from_npy(idx)
-                return torch.from_numpy(sample), torch.from_numpy(label), coord, NPY_LOAD_MARKER
-            else:
-                imgs, bbox = self.get_data_from_dcm(idx)
-                sample, target, bboxes, coord, real_target = self.crop(imgs, bbox, [bbox], isScale=False, isRand=True)
+            isRand = np.random.randint(0, 2) == 0
+            imgs, bbox = self.get_data_from_dcm(idx)
+            sample, target, bboxes, coord, real_target = self.crop(imgs, bbox, [bbox], isScale=False, isRand=isRand)
 
-                label = self.label_mapping(sample.shape[1:], target, bboxes)
-                sample = (sample.astype(np.float32) - 128) / 128
+            label = self.label_mapping(sample.shape[1:], target, bboxes)
+            sample = (sample.astype(np.float32) - 128) / 128
 
-                return torch.from_numpy(sample), \
-                       torch.from_numpy(label), \
-                       coord, \
-                       real_target
+            return torch.from_numpy(sample), \
+                   torch.from_numpy(label), \
+                   coord, \
+                   real_target
 
         if self.load:
             sample, label, coord = self.get_data_from_npy(idx)
