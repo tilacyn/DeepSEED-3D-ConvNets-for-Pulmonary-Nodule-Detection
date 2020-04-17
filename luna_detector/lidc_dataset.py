@@ -155,20 +155,26 @@ class LIDCDataset(Dataset):
         self.isRand = isRand
 
     def __getitem__(self, idx):
-        if self.phase == 'test':
-            isRand = np.random.randint(0, 2) == 0
-        else:
-            isRand = self.isRand
-        imgs, bbox = self.get_data_from_npy(idx)
-        # print(bbox)
-        sample, target, bboxes, coord, real_target = self.crop(imgs, bbox, [bbox], isScale=False, isRand=isRand)
-        label = self.label_mapping(sample.shape[1:], target, bboxes)
-        sample = (sample.astype(np.float32) - 128) / 128
-
+        sample, label, coord = self.get_preprocessed_data_from_npy(idx)
         return torch.from_numpy(sample), \
                torch.from_numpy(label), \
                coord, \
-               real_target
+               coord
+
+        # if self.phase == 'test':
+        #     isRand = np.random.randint(0, 2) == 0
+        # else:
+        #     isRand = self.isRand
+        # imgs, bbox = self.get_data_from_npy(idx)
+        # # print(bbox)
+        # sample, target, bboxes, coord, real_target = self.crop(imgs, bbox, [bbox], isScale=False, isRand=isRand)
+        # label = self.label_mapping(sample.shape[1:], target, bboxes)
+        # sample = (sample.astype(np.float32) - 128) / 128
+        #
+        # return torch.from_numpy(sample), \
+        #        torch.from_numpy(label), \
+        #        coord, \
+        #        real_target
 
     def get_data_from_dcm(self, idx):
         dcms = []
@@ -194,6 +200,13 @@ class LIDCDataset(Dataset):
         imgs = np.load(load_imgs_path)
         bbox = np.load(load_bbox_path)
         return imgs, bbox
+
+    def get_preprocessed_data_from_npy(self, idx):
+        make_load_path = lambda x: opjoin(self.lidc_npy_path, '%s_%d.npy' % (x, idx))
+        sample = np.load(make_load_path('sample'))
+        label = np.load(make_load_path('label'))
+        coord = np.load(make_load_path('coord'))
+        return sample, label, coord
 
     def save_npy(self, start, end):
         for i in range(start, end):
