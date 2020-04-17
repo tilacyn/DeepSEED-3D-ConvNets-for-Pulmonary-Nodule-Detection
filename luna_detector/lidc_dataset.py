@@ -157,26 +157,10 @@ class LIDCDataset(Dataset):
     def __getitem__(self, idx):
         if self.phase == 'test':
             isRand = np.random.randint(0, 2) == 0
-            imgs, bbox = self.get_data_from_dcm(idx)
-            sample, target, bboxes, coord, real_target = self.crop(imgs, bbox, [bbox], isScale=False, isRand=isRand)
-
-            label = self.label_mapping(sample.shape[1:], target, bboxes)
-            sample = (sample.astype(np.float32) - 128) / 128
-
-            return torch.from_numpy(sample), \
-                   torch.from_numpy(label), \
-                   coord, \
-                   real_target
-
-        if self.load:
-            sample, label, coord = self.get_data_from_npy(idx)
-            return torch.from_numpy(sample), torch.from_numpy(label), coord
-        try:
-            imgs, bbox = self.get_data_from_dcm(idx)
-        except:
-            return self[idx - 1]
-
-        sample, target, bboxes, coord, real_target = self.crop(imgs, bbox, [bbox], isScale=False, isRand=self.isRand)
+        else:
+            isRand = self.isRand
+        imgs, bbox = self.get_data_from_npy(idx)
+        sample, target, bboxes, coord, real_target = self.crop(imgs, bbox, [bbox], isScale=False, isRand=isRand)
         label = self.label_mapping(sample.shape[1:], target, bboxes)
         sample = (sample.astype(np.float32) - 128) / 128
 
@@ -204,14 +188,11 @@ class LIDCDataset(Dataset):
         return imgs, bbox
 
     def get_data_from_npy(self, idx):
-        load_sample_path = opjoin(self.lidc_npy_path, 'sample_%d.npy' % idx)
-        load_label_path = opjoin(self.lidc_npy_path, 'label_%d.npy' % idx)
-        load_coord_path = opjoin(self.lidc_npy_path, 'coord_%d.npy' % idx)
-        sample = np.load(load_sample_path)
-        label = np.load(load_label_path)
-        coord = np.load(load_coord_path)
-        return sample, label, coord
-
+        load_imgs_path = opjoin(self.lidc_npy_path, 'sample_%d.npy' % idx)
+        load_bbox_path = opjoin(self.lidc_npy_path, 'label_%d.npy' % idx)
+        imgs = np.load(load_imgs_path)
+        bbox = np.load(load_bbox_path)
+        return imgs, bbox
     def save_npy(self, start, end):
         for i in range(start, end):
             print('processing %d' % i)
