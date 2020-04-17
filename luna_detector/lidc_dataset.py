@@ -234,3 +234,6 @@ def create_index(data_path):
             ids.append(root)
     with open('index.json', 'w') as write_file:
         json.dump(ids, write_file)
+
+def get_v():
+  return np.random.randint(0, 50)
