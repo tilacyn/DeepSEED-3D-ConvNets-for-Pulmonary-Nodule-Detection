@@ -163,7 +163,7 @@ def train(data_loader, net, loss, epoch, optimizer, get_lr, save_dir):
         param_group['lr'] = lr
 
     metrics = []
-    for i, (data, target, coord) in enumerate(data_loader):
+    for i, (data, target, coord, _) in enumerate(data_loader):
         data = torch.autograd.Variable(data.cuda(non_blocking=True))
         target = torch.autograd.Variable(target.cuda(non_blocking=True))
         coord = torch.autograd.Variable(coord.cuda(non_blocking=True))
@@ -210,7 +210,7 @@ def validate(data_loader, net, loss):
     net.eval()
 
     metrics = []
-    for i, (data, target, coord) in enumerate(data_loader):
+    for i, (data, target, coord, _) in enumerate(data_loader):
         data = torch.autograd.Variable(data.cuda(non_blocking=True))
         target = torch.autograd.Variable(target.cuda(non_blocking=True))
         coord = torch.autograd.Variable(coord.cuda(non_blocking=True))

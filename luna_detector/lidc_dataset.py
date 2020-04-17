@@ -194,6 +194,7 @@ class LIDCDataset(Dataset):
         imgs = np.load(load_imgs_path)
         bbox = np.load(load_bbox_path)
         return imgs, bbox
+
     def save_npy(self, start, end):
         for i in range(start, end):
             print('processing %d' % i)
@@ -234,6 +235,3 @@ def create_index(data_path):
             ids.append(root)
     with open('index.json', 'w') as write_file:
         json.dump(ids, write_file)
-
-def get_v():
-  return np.random.randint(0, 50)
