@@ -230,10 +230,12 @@ class Crop(object):
             #     randomized crops including target (or not including depending on isRand
             if s > e:
                 start.append(int(np.random.randint(e, s)))  # !
+                print('start append {}'.format(start[-1]))
             else:
                 start.append(int(target[i] - crop_size[i] / 2 + np.random.randint(-bound_size / 2, bound_size / 2)))
             print(s, e, bound_size)
 
+        print('start %s' % start)
         normstart = np.array(start).astype('float32') / np.array(imgs.shape[1:]) - 0.5
         normsize = np.array(crop_size).astype('float32') / np.array(imgs.shape[1:])
         print('normstart %s' % normstart)
