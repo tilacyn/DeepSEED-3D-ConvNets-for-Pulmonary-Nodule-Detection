@@ -198,7 +198,10 @@ class LIDCDataset(Dataset):
     def save_npy(self, start, end):
         for i in range(start, end):
             print('processing %d' % i)
-            imgs, bbox = self.get_data_from_dcm(i)
+            try:
+                imgs, bbox = self.get_data_from_dcm(i)
+            except:
+                imgs, bbox = self.get_data_from_dcm(i - 1)
 
             save_imgs_path = opjoin(self.lidc_npy_path, 'imgs_%d.npy' % i)
             save_bbox_path = opjoin(self.lidc_npy_path, 'bbox_%d.npy' % i)
