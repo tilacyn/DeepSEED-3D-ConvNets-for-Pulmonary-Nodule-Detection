@@ -202,8 +202,7 @@ class Crop(object):
         bboxes - array of bboxes, each bbox is an array of 4
         """
         # print('crop input bboxes %s' % bboxes)
-        t = time.time()
-        np.random.seed(t)
+        np.random.seed(int(time.time() * 1000) % 100000)
         print('crop input target %s' % target)
         if isScale:
             radiusLim = [8., 100.]
