@@ -215,21 +215,13 @@ class LIDCDataset(Dataset):
     def save_npy(self, start, end):
         for i in range(start, end):
             print('processing %d' % i)
-            sample, label, coord = self[i]
-            sample = sample.numpy()
-            label = label.numpy()
+            imgs, bbox = self.get_data_from_dcm(i)
 
-            load_sample_path = opjoin(self.lidc_npy_path, 'sample_%d.npy' % i)
-            load_label_path = opjoin(self.lidc_npy_path, 'label_%d.npy' % i)
-            load_coord_path = opjoin(self.lidc_npy_path, 'coord_%d.npy' % i)
+            save_imgs_path = opjoin(self.lidc_npy_path, 'imgs_%d.npy' % i)
+            save_bbox_path = opjoin(self.lidc_npy_path, 'bbox_%d.npy' % i)
 
-            for path in [load_coord_path, load_label_path, load_sample_path]:
-                if not os.path.exists(path):
-                    open(path, 'a').close()
-
-            np.save(load_sample_path, sample)
-            np.save(load_label_path, label)
-            np.save(load_coord_path, coord)
+            np.save(save_bbox_path, bbox)
+            np.save(save_imgs_path, imgs)
 
     def __len__(self):
         return len(self.ids)
