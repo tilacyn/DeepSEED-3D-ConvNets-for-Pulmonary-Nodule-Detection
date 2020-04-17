@@ -203,7 +203,7 @@ class Crop(object):
         """
         # print('crop input bboxes %s' % bboxes)
         np.random.seed(int(time.time() * 1000) % 100000)
-        print('crop input target %s' % target)
+        # print('crop input target %s' % target)
         if isScale:
             radiusLim = [8., 100.]
             scaleLim = [0.75, 1.25]
@@ -231,15 +231,15 @@ class Crop(object):
             #     randomized crops including target (or not including depending on isRand
             if s > e:
                 start.append(int(np.random.randint(e, s)))  # !
-                print('start append {}'.format(start[-1]))
+                # print('start append {}'.format(start[-1]))
             else:
                 start.append(int(target[i] - crop_size[i] / 2 + np.random.randint(-bound_size / 2, bound_size / 2)))
-            print(s, e, bound_size)
+            # print(s, e, bound_size)
 
-        print('start %s' % start)
+        # print('start %s' % start)
         normstart = np.array(start).astype('float32') / np.array(imgs.shape[1:]) - 0.5
         normsize = np.array(crop_size).astype('float32') / np.array(imgs.shape[1:])
-        print('normstart %s' % normstart)
+        # print('normstart %s' % normstart)
         # print('normsize %s' % normsize)
         xx, yy, zz = np.meshgrid(np.linspace(normstart[0], normstart[0] + normsize[0], self.crop_size[0] // self.stride),
                                  np.linspace(normstart[1], normstart[1] + normsize[1], self.crop_size[1] // self.stride),
