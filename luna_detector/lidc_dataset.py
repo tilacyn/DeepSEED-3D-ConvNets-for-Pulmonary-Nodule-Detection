@@ -155,26 +155,26 @@ class LIDCDataset(Dataset):
         self.isRand = isRand
 
     def __getitem__(self, idx):
-        sample, label, coord = self.get_preprocessed_data_from_npy(idx)
-        return torch.from_numpy(sample), \
-               torch.from_numpy(label), \
-               coord, \
-               coord
-
-        # if self.phase == 'test':
-        #     isRand = np.random.randint(0, 2) == 0
-        # else:
-        #     isRand = self.isRand
-        # imgs, bbox = self.get_data_from_npy(idx)
-        # # print(bbox)
-        # sample, target, bboxes, coord, real_target = self.crop(imgs, bbox, [bbox], isScale=False, isRand=isRand)
-        # label = self.label_mapping(sample.shape[1:], target, bboxes)
-        # sample = (sample.astype(np.float32) - 128) / 128
-        #
+        # sample, label, coord = self.get_preprocessed_data_from_npy(idx)
         # return torch.from_numpy(sample), \
         #        torch.from_numpy(label), \
         #        coord, \
-        #        real_target
+        #        coord
+
+        if self.phase == 'test':
+            isRand = np.random.randint(0, 2) == 0
+        else:
+            isRand = self.isRand
+        imgs, bbox = self.get_data_from_npy(idx)
+        # print(bbox)
+        sample, target, bboxes, coord, real_target = self.crop(imgs, bbox, [bbox], isScale=False, isRand=isRand)
+        label = self.label_mapping(sample.shape[1:], target, bboxes)
+        sample = (sample.astype(np.float32) - 128) / 128
+
+        return torch.from_numpy(sample), \
+               torch.from_numpy(label), \
+               coord, \
+               real_target
 
     def get_data_from_dcm(self, idx):
         dcms = []
