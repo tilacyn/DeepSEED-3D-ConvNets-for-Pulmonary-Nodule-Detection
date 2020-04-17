@@ -160,6 +160,7 @@ class LIDCDataset(Dataset):
         else:
             isRand = self.isRand
         imgs, bbox = self.get_data_from_npy(idx)
+        print(bbox)
         sample, target, bboxes, coord, real_target = self.crop(imgs, bbox, [bbox], isScale=False, isRand=isRand)
         label = self.label_mapping(sample.shape[1:], target, bboxes)
         sample = (sample.astype(np.float32) - 128) / 128
