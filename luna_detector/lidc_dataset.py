@@ -137,6 +137,8 @@ def resolve_bbox(dcms, id2roi):
     return np.concatenate((np.mean(nodule_coordinates, axis=0), [5.0]))
 
 
+NPY_LOAD_MARKER = -5
+
 class LIDCDataset(Dataset):
     def __init__(self, data_path, config, stard_idx, end_idx, load=False, isRand=False, phase='train'):
         self.data_path = data_path
@@ -155,7 +157,7 @@ class LIDCDataset(Dataset):
         if self.phase == 'test':
             if np.random.randint(0, 2) == 0:
                 sample, label, coord = self.get_data_from_npy(idx)
-                return torch.from_numpy(sample), torch.from_numpy(label), coord, None
+                return torch.from_numpy(sample), torch.from_numpy(label), coord, NPY_LOAD_MARKER
             else:
                 imgs, bbox = self.get_data_from_dcm(idx)
                 sample, target, bboxes, coord, real_target = self.crop(imgs, bbox, [bbox], isScale=False, isRand=True)
