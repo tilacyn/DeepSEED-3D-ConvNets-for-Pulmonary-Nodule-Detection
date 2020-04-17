@@ -189,8 +189,8 @@ class LIDCDataset(Dataset):
         return imgs, bbox
 
     def get_data_from_npy(self, idx):
-        load_imgs_path = opjoin(self.lidc_npy_path, 'sample_%d.npy' % idx)
-        load_bbox_path = opjoin(self.lidc_npy_path, 'label_%d.npy' % idx)
+        load_imgs_path = opjoin(self.lidc_npy_path, 'imgs_%d.npy' % idx)
+        load_bbox_path = opjoin(self.lidc_npy_path, 'bbox_%d.npy' % idx)
         imgs = np.load(load_imgs_path)
         bbox = np.load(load_bbox_path)
         return imgs, bbox
