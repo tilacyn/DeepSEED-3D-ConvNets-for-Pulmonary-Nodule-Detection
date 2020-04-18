@@ -154,17 +154,17 @@ def main():
 
         # if best_loss > vali_loss:
         #     best_loss = vali_loss
-        #     state_dict = net.module.state_dict()
-        #     for key in state_dict.keys():
-        #         state_dict[key] = state_dict[key].cpu()
-        #
-        #     torch.save({
-        #         'epoch': epoch + 1,
-        #         'save_dir': save_dir,
-        #         'state_dict': state_dict,
-        #         'args': args},
-        #         os.path.join(save_dir, 'detector_%03d.ckpt' % epoch))
-        #     print("save model on epoch %d" % epoch)
+        state_dict = net.module.state_dict()
+        for key in state_dict.keys():
+            state_dict[key] = state_dict[key].cpu()
+        if epoch % 10 == 2:
+            torch.save({
+                'epoch': epoch + 1,
+                'save_dir': save_dir,
+                'state_dict': state_dict,
+                'args': args},
+                os.path.join(save_dir, 'detector_%03d.ckpt' % epoch))
+            print("save model on epoch %d" % epoch)
 
 
 def train(data_loader, net, loss, epoch, optimizer, get_lr, save_dir):
