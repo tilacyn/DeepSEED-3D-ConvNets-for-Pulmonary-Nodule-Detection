@@ -141,7 +141,7 @@ NPY_LOAD_MARKER = -5
 
 
 class LIDCDataset(Dataset):
-    def __init__(self, data_path, config, stard_idx, end_idx, load=False, isRand=False, phase='train'):
+    def __init__(self, data_path, config, stard_idx, end_idx, load=False, isRand=False, phase='train', random):
         self.data_path = data_path
         self.ids = []
         self.start_idx = stard_idx
@@ -149,10 +149,11 @@ class LIDCDataset(Dataset):
         self.create_ids()
         self.phase = phase
         self.label_mapping = LabelMapping(config, 'train')
-        self.crop = Crop(config)
+        self.crop = Crop(config, random)
         self.load = load
         self.lidc_npy_path = config_training['lidc-npy']
         self.isRand = isRand
+        self.random = random
 
     def __getitem__(self, idx):
         # sample, label, coord = self.get_preprocessed_data_from_npy(idx)

@@ -186,11 +186,12 @@ def augment(sample, target, bboxes, coord, ifflip=True, ifrotate=True, ifswap=Tr
 
 
 class Crop(object):
-    def __init__(self, config):
+    def __init__(self, config, random):
         self.crop_size = config['crop_size']
         self.bound_size = config['bound_size']
         self.stride = config['stride']
         self.pad_value = config['pad_value']
+        self.random = random
 
     def __call__(self, imgs, target, bboxes, isScale=False, isRand=False):
         """
@@ -202,7 +203,8 @@ class Crop(object):
         bboxes - array of bboxes, each bbox is an array of 4
         """
         # print('crop input bboxes %s' % bboxes)
-        np.random.seed(int(time.time() * 1000) % 100000)
+        if self.random:
+            np.random.seed(int(time.time() * 1000) % 100000)
         # print('crop input target %s' % target)
         if isScale:
             radiusLim = [8., 100.]
