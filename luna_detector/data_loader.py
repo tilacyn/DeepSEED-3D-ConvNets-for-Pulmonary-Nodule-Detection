@@ -39,6 +39,7 @@ class LungNodule3Ddetector(Dataset):
         # idcs = np.load(split_path)
         idcs = split_path
 
+        print(idcs)
         if phase != 'test':
             idcs = [f for f in idcs if (f not in self.blacklist and os.path.exists(os.path.join(data_dir, '%s_label.npy' % f)))]
 
