@@ -116,7 +116,7 @@ def main():
         return
 
     if args.mode != 'ours':
-        datadir = os.path.join('content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection',
+        datadir = os.path.join('/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection',
                                config_training['preprocess_result_path'])
         train_dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
         val_dataset = LungNodule3Ddetector(datadir, luna_test, config, phase='val')
