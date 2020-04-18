@@ -115,16 +115,16 @@ def main():
         test(test_loader, net, get_pbb, save_dir, config)
         return
 
-
     if args.mode != 'ours':
-        datadir = config_training['preprocess_result_path']
+        datadir = os.path.join('content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection',
+                               config_training['preprocess_result_path'])
         train_dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
         val_dataset = LungNodule3Ddetector(datadir, luna_test, config, phase='val')
     else:
         datadir = '/content/drive/My Drive/dsb2018_topcoders/data'
         train_dataset = LIDCDataset(datadir, config, 0, args.train_len, load=True, random=args.random)
         val_dataset = LIDCDataset(datadir, config, args.train_len, args.train_len + args.val_len, load=True,
-                              random=args.random)
+                                  random=args.random)
 
     print(args.batch_size)
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
