@@ -44,7 +44,7 @@ class LungNodule3Ddetector(Dataset):
             new_idcs = []
             for f in idcs:
                 cond = f not in self.blacklist and os.path.exists(os.path.join(data_dir, '%s_label.npy' % f))
-                print(cond)
+                print(f, ' ', cond)
                 if cond:
                     new_idcs.append(f)
             idcs = new_idcs
