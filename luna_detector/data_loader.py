@@ -39,13 +39,13 @@ class LungNodule3Ddetector(Dataset):
         # idcs = np.load(split_path)
         idcs = split_path
 
-        print(idcs)
+        # print(idcs)
         if phase != 'kek':
             new_idcs = []
             for f in idcs:
                 cond = os.path.exists(os.path.join(data_dir, '%s_label.npy' % f))
                 # print(f, ' ', cond)
-                print(os.path.join(data_dir, '%s_label.npy' % f))
+                # print(os.path.join(data_dir, '%s_label.npy' % f))
                 if cond:
                     new_idcs.append(f)
             idcs = new_idcs
