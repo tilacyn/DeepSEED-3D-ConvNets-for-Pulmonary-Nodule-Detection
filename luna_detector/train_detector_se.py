@@ -130,8 +130,8 @@ def main():
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
                               pin_memory=True)
 
-    val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers,
-                            pin_memory=True)
+    # val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers,
+    #                         pin_memory=True)
 
     optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=args.weight_decay)
 
@@ -150,21 +150,21 @@ def main():
     for epoch in range(start_epoch, args.epochs + 1):
         train(train_loader, net, loss, epoch, optimizer, get_lr, save_dir)
         print("finsihed epoch {}".format(epoch))
-        vali_loss = validate(val_loader, net, loss)
+        # vali_loss = validate(val_loader, net, loss)
 
-        if best_loss > vali_loss:
-            best_loss = vali_loss
-            state_dict = net.module.state_dict()
-            for key in state_dict.keys():
-                state_dict[key] = state_dict[key].cpu()
-
-            torch.save({
-                'epoch': epoch + 1,
-                'save_dir': save_dir,
-                'state_dict': state_dict,
-                'args': args},
-                os.path.join(save_dir, 'detector_%03d.ckpt' % epoch))
-            print("save model on epoch %d" % epoch)
+        # if best_loss > vali_loss:
+        #     best_loss = vali_loss
+        #     state_dict = net.module.state_dict()
+        #     for key in state_dict.keys():
+        #         state_dict[key] = state_dict[key].cpu()
+        #
+        #     torch.save({
+        #         'epoch': epoch + 1,
+        #         'save_dir': save_dir,
+        #         'state_dict': state_dict,
+        #         'args': args},
+        #         os.path.join(save_dir, 'detector_%03d.ckpt' % epoch))
+        #     print("save model on epoch %d" % epoch)
 
 
 def train(data_loader, net, loss, epoch, optimizer, get_lr, save_dir):
