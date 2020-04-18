@@ -1,4 +1,4 @@
-config = {'luna_raw': 'data/luna-raw',
+config = {'luna_raw': 'data/luna',
           'luna_segment': 'data/luna-segment/seg-lungs-LUNA16',
           'lidc-npy' : 'data/lidc-npy',
 
