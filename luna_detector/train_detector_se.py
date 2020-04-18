@@ -102,7 +102,6 @@ def main():
     loss = loss.cuda()
     cudnn.benchmark = True
     net = DataParallel(net)
-    datadir = '/content/drive/My Drive/dsb2018_topcoders/data'
 
     luna_train = np.load('./luna_train.npy')
     luna_test = np.load('./luna_test.npy')
@@ -116,20 +115,22 @@ def main():
         test(test_loader, net, get_pbb, save_dir, config)
         return
 
-    if args.mode != 'ours':
-        dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
-    else:
-        dataset = LIDCDataset(datadir, config, 0, args.train_len, load=True, random=args.random)
-    print(args.batch_size)
-    train_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
-                              pin_memory=True)
 
     if args.mode != 'ours':
-        dataset = LungNodule3Ddetector(datadir, luna_test, config, phase='val')
+        datadir = config_training['preprocess_result_path']
+        train_dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
+        val_dataset = LungNodule3Ddetector(datadir, luna_test, config, phase='val')
     else:
-        dataset = LIDCDataset(datadir, config, args.train_len, args.train_len + args.val_len, load=True,
+        datadir = '/content/drive/My Drive/dsb2018_topcoders/data'
+        train_dataset = LIDCDataset(datadir, config, 0, args.train_len, load=True, random=args.random)
+        val_dataset = LIDCDataset(datadir, config, args.train_len, args.train_len + args.val_len, load=True,
                               random=args.random)
-    val_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers,
+
+    print(args.batch_size)
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
+                              pin_memory=True)
+
+    val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers,
                             pin_memory=True)
 
     optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=args.weight_decay)
