@@ -62,7 +62,8 @@ parser.add_argument('--verbose', default=False, type=bool, metavar='N',
                     help='number of gpu for test')
 parser.add_argument('--random', default=False, type=bool, metavar='N',
                     help='number of gpu for test')
-
+parser.add_argument('--mode', default='ours', type=str, metavar='N',
+                    help='either our lidc version or their luna version')
 
 
 def main():
@@ -114,14 +115,21 @@ def main():
         test(test_loader, net, get_pbb, save_dir, config)
         return
 
-    # dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
-    dataset = LIDCDataset(datadir, config, 0, args.train_len, load=True, random=args.random)
+    if args.mode != 'ours':
+        dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
+    else:
+        dataset = LIDCDataset(datadir, config, 0, args.train_len, load=True, random=args.random)
     print(args.batch_size)
     train_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
                               pin_memory=True)
 
-    dataset = LIDCDataset(datadir, config, args.train_len, args.train_len + args.val_len, load=True, random=args.random)
-    val_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers, pin_memory=True)
+    if args.mode != 'ours':
+        dataset = LungNodule3Ddetector(datadir, luna_test, config, phase='val')
+    else:
+        dataset = LIDCDataset(datadir, config, args.train_len, args.train_len + args.val_len, load=True,
+                              random=args.random)
+    val_loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers,
+                            pin_memory=True)
 
     optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=args.weight_decay)
 
