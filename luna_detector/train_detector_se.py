@@ -8,6 +8,7 @@ from importlib import import_module
 import shutil
 from utils import *
 import sys
+from data_loader import LungNodule3Ddetector
 
 sys.path.append('../')
 from split_combine import SplitComb
