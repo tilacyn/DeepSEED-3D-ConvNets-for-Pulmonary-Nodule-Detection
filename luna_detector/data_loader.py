@@ -240,6 +240,7 @@ class Crop(object):
             else:
                 s = np.max([imgs.shape[i + 1] - crop_size[i] / 2, imgs.shape[i + 1] / 2 + bound_size])
                 e = np.min([crop_size[i] / 2, imgs.shape[i + 1] / 2 - bound_size])
+                target = np.array([np.nan, np.nan, np.nan, np.nan])
             #     randomized crops including target (or not including depending on isRand
             if s > e:
                 start.append(int(np.random.randint(e, s)))  # !
@@ -291,10 +292,9 @@ class Crop(object):
             for i in range(len(bboxes)):
                 for j in range(4):
                     bboxes[i][j] = bboxes[i][j] * scale
-        real_target = target
         if isRand:
             target = np.array([np.nan, np.nan, np.nan, np.nan])
-        return crop, target, bboxes, coord, real_target
+        return crop, target, bboxes, coord, 1
 
 
 class LabelMapping(object):
