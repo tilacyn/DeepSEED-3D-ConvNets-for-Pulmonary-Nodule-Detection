@@ -52,6 +52,7 @@ class LungNodule3Ddetector(Dataset):
             if np.all(l == 0):
                 l = np.array([])
             labels.append(l)
+        print('len(labels) ', len(labels))
 
         self.sample_bboxes = labels
         if self.phase != 'test':
