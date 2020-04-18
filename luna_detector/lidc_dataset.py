@@ -141,7 +141,7 @@ NPY_LOAD_MARKER = -5
 
 
 class LIDCDataset(Dataset):
-    def __init__(self, data_path, config, stard_idx, end_idx, load=False, isRand=False, phase='train', random):
+    def __init__(self, data_path, config, stard_idx, end_idx, load=False, isRand=False, phase='train', random=False):
         self.data_path = data_path
         self.ids = []
         self.start_idx = stard_idx
