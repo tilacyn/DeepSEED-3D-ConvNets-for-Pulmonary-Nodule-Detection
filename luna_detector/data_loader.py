@@ -196,7 +196,7 @@ def augment(sample, target, bboxes, coord, ifflip=True, ifrotate=True, ifswap=Tr
 
 
 class Crop(object):
-    def __init__(self, config, random):
+    def __init__(self, config, random=False):
         self.crop_size = config['crop_size']
         self.bound_size = config['bound_size']
         self.stride = config['stride']
