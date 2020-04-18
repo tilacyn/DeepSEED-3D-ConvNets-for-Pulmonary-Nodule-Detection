@@ -103,7 +103,7 @@ class LungNodule3Ddetector(Dataset):
                 imgs = np.load(filename)
                 bboxes = self.sample_bboxes[int(bbox[0])]
                 isScale = self.augtype['scale'] and (self.phase == 'train')
-                sample, target, bboxes, coord = self.crop(imgs, bbox[1:], bboxes, isScale, isRandom)
+                sample, target, bboxes, coord, _ = self.crop(imgs, bbox[1:], bboxes, isScale, isRandom)
                 if self.phase == 'train' and not isRandom:
                     sample, target, bboxes, coord = augment(sample, target, bboxes, coord,
                                                             ifflip=self.augtype['flip'],
@@ -115,7 +115,7 @@ class LungNodule3Ddetector(Dataset):
                 imgs = np.load(filename)
                 bboxes = self.sample_bboxes[randimid]
                 isScale = self.augtype['scale'] and (self.phase == 'train')
-                sample, target, bboxes, coord = self.crop(imgs, [], bboxes, isScale=False, isRand=True)
+                sample, target, bboxes, coord, _ = self.crop(imgs, [], bboxes, isScale=False, isRand=True)
             # print(target)
             label = self.label_mapping(sample.shape[1:], target, bboxes)
             sample = (sample.astype(np.float32) - 128) / 128
