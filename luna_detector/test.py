@@ -12,6 +12,7 @@ from config_training import config as config_training
 from scipy.spatial.distance import euclidean
 from PIL import Image
 import math
+from os.path import join as opjoin
 
 
 class Test:
