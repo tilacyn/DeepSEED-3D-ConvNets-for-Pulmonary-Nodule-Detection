@@ -25,7 +25,7 @@ class Test:
             self.data_path = data_path
         self.base_path = '/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection'
         self.luna_path = opjoin(self.base_path, 'luna_detector')
-        model = import_module('res18_se')
+        model = import_module('res18_se')p
         print('creating model')
         config, net, loss, get_pbb = model.get_model()
         net = net.cuda()
@@ -54,6 +54,7 @@ class Test:
             coord = torch.autograd.Variable(coord.cuda())
             data = data.type(torch.cuda.FloatTensor)
             coord = coord.type(torch.cuda.FloatTensor)
+            print('data shape ', data.shape)
 
             output = self.net(data, coord)
             pred = self.gp(output.cpu().detach().numpy()[0], self.thr)
