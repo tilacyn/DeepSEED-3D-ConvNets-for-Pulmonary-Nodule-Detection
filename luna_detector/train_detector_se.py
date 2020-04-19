@@ -304,7 +304,7 @@ def test(data_loader, net, get_pbb, save_dir, config):
         featurelist = []
 
         for i in range(len(splitlist) - 1):
-            input = torch.autograd.Variable(data[splitlist[i]:splitlist[i + 1]].cuda(True))
+            input = torch.autograd.Variable(data[splitlist[i]:splitlist[i + 1]].cuda(non_blocking=True))
             inputcoord = torch.autograd.Variable(coord[splitlist[i]:splitlist[i + 1]].cuda(non_blocking=True))
             if isfeat:
                 output, feature = net(input, inputcoord)
