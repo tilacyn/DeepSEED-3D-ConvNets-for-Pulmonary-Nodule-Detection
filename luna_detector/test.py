@@ -54,7 +54,6 @@ class Test:
             coord = torch.autograd.Variable(coord.cuda())
             data = data.type(torch.cuda.FloatTensor)
             coord = coord.type(torch.cuda.FloatTensor)
-            print('data shape ', data.shape)
 
             output = self.net(data, coord)
             pred = self.gp(output.cpu().detach().numpy()[0], self.thr)
@@ -91,6 +90,8 @@ class Test:
             coord = torch.autograd.Variable(coord.cuda())
             data = data.type(torch.cuda.FloatTensor)
             coord = coord.type(torch.cuda.FloatTensor)
+
+            print('data shape ', data.shape)
 
             output = self.net(data, coord)
             pred = self.gp(output.cpu().detach().numpy()[0], self.thr)
