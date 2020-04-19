@@ -144,7 +144,7 @@ class LungNodule3Ddetector(Dataset):
                                                     margin=int(self.split_comber.margin / self.stride))
             assert np.all(nzhw == nzhw2)
             imgs = (imgs.astype(np.float32) - 128) / 128
-            print('inside dataset: ', imgs.shape)
+            # print('inside dataset: ', imgs.shape)
             return torch.from_numpy(imgs), bboxes, torch.from_numpy(coord2), np.array(nzhw)
 
     def __len__(self):
