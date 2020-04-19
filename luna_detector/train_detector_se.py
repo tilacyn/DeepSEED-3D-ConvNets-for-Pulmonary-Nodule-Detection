@@ -116,7 +116,7 @@ def main():
         split_comber = SplitComb(sidelen, config['max_stride'], config['stride'], margin, config['pad_value'])
         dataset = LungNodule3Ddetector(
             datadir,
-            luna_test,
+            luna_train,
             config,
             phase='test',
             split_comber=split_comber)
