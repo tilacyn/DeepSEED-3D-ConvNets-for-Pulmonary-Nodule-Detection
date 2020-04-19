@@ -53,7 +53,7 @@ class LungNodule3Ddetector(Dataset):
         self.filenames = [os.path.join(data_dir, '%s_clean.npy' % idx) for idx in idcs]
 
         labels = []
-        # print('len(idcs) ', len(idcs))
+        print('len(idcs) ', len(idcs))
 
         for idx in idcs:
             # print('%s_label.npy' % idx)
@@ -61,7 +61,7 @@ class LungNodule3Ddetector(Dataset):
             if np.all(l == 0):
                 l = np.array([])
             labels.append(l)
-        # print('len(labels) ', len(labels))
+        print('len(labels) ', len(labels))
 
         self.sample_bboxes = labels
         if self.phase != 'test':
