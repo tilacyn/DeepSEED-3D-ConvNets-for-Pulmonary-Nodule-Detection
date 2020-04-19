@@ -302,6 +302,8 @@ def test(data_loader, net, get_pbb, save_dir, config):
             splitlist.append(len(data))
         outputlist = []
         featurelist = []
+        print('splitlist ', splitlist)
+        print('n_per_run ', n_per_run)
 
         for i in range(len(splitlist) - 1):
             input = torch.autograd.Variable(data[splitlist[i]:splitlist[i + 1]].cuda(non_blocking=True))
