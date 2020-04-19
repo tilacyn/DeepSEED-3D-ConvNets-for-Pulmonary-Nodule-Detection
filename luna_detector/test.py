@@ -1,3 +1,4 @@
+import os
 from importlib import import_module
 
 import numpy as np
@@ -16,20 +17,27 @@ from os.path import join as opjoin
 
 
 class Test:
-    def __init__(self, data_path, thr, path_to_model):
+    def __init__(self, data_path=None, thr=0, path_to_model=''):
+        if data_path is None:
+            self.data_path = os.path.join('/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection',
+                                   config_training['preprocess_result_path'])
+        else:
+            self.data_path = data_path
+        self.luna_path = opjoin(self.base_path, 'luna_detector')
+        self.base_path = '/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection'
         model = import_module('res18_se')
         print('creating model')
         config, net, loss, get_pbb = model.get_model()
         net = net.cuda()
         loss = loss.cuda()
-        checkpoint = torch.load(opjoin(luna_path, 'test_results', path_to_model))
+        checkpoint = torch.load(opjoin(self.luna_path, 'test_results', path_to_model))
         net.load_state_dict(checkpoint['state_dict'])
         self.net = net
         self.config = config
         self.loss = loss
         self.gp = GetPBB(config)
         self.thr = thr
-        self.data_path = data_path
+
 
     def test(self):
         luna_train = np.load('./luna_train.npy')
