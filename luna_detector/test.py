@@ -68,15 +68,16 @@ class Test:
             print(tp, tn, p, n)
         return [tp, tn, p, n]
 
-def test_luna(self, start=0, end=50):
-        dataset = LungNodule3Ddetector(data_path, self.config, start, end, isRand=True, phase='test')
+    def test_luna(self):
+        luna_train = np.load('./luna_train.npy')
+        dataset = LungNodule3Ddetector(self.data_path, luna_train, self.config)
         data_loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1,
                                  pin_memory=True)
         tn = 0
         tp = 0
         n = 0
         p = 0
-        for i, (data, target, coord, tgt) in enumerate(data_loader):
+        for i, (data, target, coord) in enumerate(data_loader):
             data = torch.autograd.Variable(data.cuda())
             target = torch.autograd.Variable(target.cuda())
             coord = torch.autograd.Variable(coord.cuda())
