@@ -23,8 +23,8 @@ class Test:
                                    config_training['preprocess_result_path'])
         else:
             self.data_path = data_path
-        self.luna_path = opjoin(self.base_path, 'luna_detector')
         self.base_path = '/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection'
+        self.luna_path = opjoin(self.base_path, 'luna_detector')
         model = import_module('res18_se')
         print('creating model')
         config, net, loss, get_pbb = model.get_model()
