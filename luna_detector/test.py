@@ -91,7 +91,8 @@ class Test:
             data = data.type(torch.cuda.FloatTensor)
             coord = coord.type(torch.cuda.FloatTensor)
 
-            print('data shape ', data.shape)
+            print('data shape: {}'.format(data.shape))
+            print('coord shape: {}'.format(coord.shape))
 
             output = self.net(data, coord)
             pred = self.gp(output.cpu().detach().numpy()[0], self.thr)
