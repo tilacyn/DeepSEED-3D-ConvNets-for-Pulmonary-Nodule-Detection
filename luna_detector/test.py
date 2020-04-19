@@ -1,5 +1,3 @@
-os.chdir(luna_path)
-import glob
 from importlib import import_module
 
 import numpy as np
