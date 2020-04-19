@@ -119,7 +119,8 @@ def main():
             luna_train,
             config,
             phase='test',
-            split_comber=split_comber)
+            # split_comber=split_comber
+        )
         test_loader = DataLoader(
             dataset,
             batch_size=1,
