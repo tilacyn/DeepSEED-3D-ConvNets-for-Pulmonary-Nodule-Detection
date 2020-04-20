@@ -122,8 +122,8 @@ class Test:
 
             print('pred: {}'.format(pred))
             print('true: {}'.format(true))
-            print(tp, tn, p, n)
-        return [tp, tn, p, n]
+            print(tp, tn, p, n, fp)
+        return [tp, tn, p, n, fp]
 
     def validate(self, start, end):
         net = self.net
