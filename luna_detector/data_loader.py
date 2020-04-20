@@ -99,7 +99,7 @@ class LungNodule3Ddetector(Dataset):
         # print('isRandom ', isRandom)
         # print('isRandomImg ', isRandomImg)
         isRandomImg = False
-        isRandom = True
+        isRandom = False
 
         if self.phase != 'test':
             if not isRandomImg:
