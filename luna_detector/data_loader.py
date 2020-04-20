@@ -85,16 +85,19 @@ class LungNodule3Ddetector(Dataset):
         t = time.time()
         np.random.seed(int(str(t % 1)[2:7]))  # seed according to time
 
+        # isRandomImg = False
+        # if self.phase != 'test':
+        #     if idx >= len(self.bboxes):
+        #         isRandom = True
+        #         idx = idx % len(self.bboxes)
+        #         isRandomImg = np.random.randint(2)
+        #     else:
+        #         isRandom = False
+        # else:
+        #     isRandom = False
+
         isRandomImg = False
-        if self.phase != 'test':
-            if idx >= len(self.bboxes):
-                isRandom = True
-                idx = idx % len(self.bboxes)
-                isRandomImg = np.random.randint(2)
-            else:
-                isRandom = False
-        else:
-            isRandom = False
+        isRandom = np.random.randint(2)
 
         # print('isRandom ', isRandom)
         # print('isRandomImg ', isRandomImg)
