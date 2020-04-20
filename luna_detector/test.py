@@ -17,7 +17,7 @@ from os.path import join as opjoin
 
 
 class Test:
-    def __init__(self, data_path=None, thr=0, path_to_model=''):
+    def __init__(self, data_path=None, thr=0, path_to_model='', start=0, end=0):
         if data_path is None:
             self.data_path = os.path.join('/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection',
                                    config_training['preprocess_result_path'])
@@ -37,10 +37,12 @@ class Test:
         self.loss = loss
         self.gp = GetPBB(config)
         self.thr = thr
+        self.start = start
+        self.end = end
 
 
     def test(self):
-        dataset = LIDCDataset(self.data_path, self.config, 0, 50, phase='test')
+        dataset = LIDCDataset(self.data_path, self.config, self.start, self.end, phase='test')
         data_loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1,
                                  pin_memory=True)
         tn = 0
