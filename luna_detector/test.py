@@ -40,8 +40,7 @@ class Test:
 
 
     def test(self):
-        luna_train = np.load('./luna_train.npy')
-        dataset = LungNodule3Ddetector(self.data_path, luna_train, self.config)
+        dataset = LIDCDataset(self.data_path, self.config, 0, 50, phase='test')
         data_loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1,
                                  pin_memory=True)
         tn = 0

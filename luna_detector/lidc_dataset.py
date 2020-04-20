@@ -1,6 +1,7 @@
 import glob
 import json
 import os
+import time
 from os.path import join as opjoin
 
 import torch
@@ -156,11 +157,8 @@ class LIDCDataset(Dataset):
         self.random = random
 
     def __getitem__(self, idx):
-        # sample, label, coord = self.get_preprocessed_data_from_npy(idx)
-        # return torch.from_numpy(sample), \
-        #        torch.from_numpy(label), \
-        #        coord, \
-        #        coord
+        t = time.time()
+        np.random.seed(int(str(t % 1)[2:7]))  # seed according to time
 
         if self.phase == 'test':
             isRand = np.random.randint(0, 2) == 0
