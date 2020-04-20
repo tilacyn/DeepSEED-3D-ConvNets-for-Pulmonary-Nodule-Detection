@@ -137,7 +137,6 @@ def main():
                                config_training['preprocess_result_path'])
         print('len lun train', len(luna_train))
         train_dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train', start=0, end=70)
-        # val_dataset = LungNodule3Ddetector(datadir, luna_test, config, phase='val')
     else:
         datadir = '/content/drive/My Drive/dsb2018_topcoders/data'
         train_dataset = LIDCDataset(datadir, config, 0, args.train_len, load=True, random=args.random)
