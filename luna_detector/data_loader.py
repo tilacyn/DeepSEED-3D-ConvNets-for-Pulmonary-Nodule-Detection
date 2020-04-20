@@ -39,7 +39,6 @@ class LungNodule3Ddetector(Dataset):
         # idcs = np.load(split_path)
         idcs = split_path
 
-        # print(idcs)
         if phase != 'kek':
             new_idcs = []
             for f in idcs:
@@ -50,6 +49,7 @@ class LungNodule3Ddetector(Dataset):
                     new_idcs.append(f)
             idcs = new_idcs
 
+        print('len idcs ', len(idcs))
         self.filenames = [os.path.join(data_dir, '%s_clean.npy' % idx) for idx in idcs]
 
         labels = []
