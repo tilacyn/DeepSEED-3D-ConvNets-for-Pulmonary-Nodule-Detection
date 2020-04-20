@@ -85,7 +85,7 @@ class Test:
         n = 0
         p = 0
 
-        for i, (data, target, coord) in enumerate(dataset[0], dataset[0], dataset[0]):
+        for i, (data, target, coord) in enumerate([dataset[0], dataset[0], dataset[0]]):
             data = torch.autograd.Variable(data.cuda())
             target = torch.autograd.Variable(target.cuda())
             coord = torch.autograd.Variable(coord.cuda())

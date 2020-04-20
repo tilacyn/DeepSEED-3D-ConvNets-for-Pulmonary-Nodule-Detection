@@ -22,7 +22,7 @@ import pdb
 
 
 class LungNodule3Ddetector(Dataset):
-    def __init__(self, data_dir, split_path, config, phase='train', split_comber=None):
+    def __init__(self, data_dir, split_path, config, phase='train', split_comber=None, start=0, end=0):
         assert (phase == 'train' or phase == 'val' or phase == 'test')
         self.phase = phase
         self.max_stride = config['max_stride']
@@ -50,10 +50,10 @@ class LungNodule3Ddetector(Dataset):
             idcs = new_idcs
 
         print('len idcs ', len(idcs))
+        idcs = idcs[start: len(idcs) - end]
         self.filenames = [os.path.join(data_dir, '%s_clean.npy' % idx) for idx in idcs]
 
         labels = []
-        print('len(idcs) ', len(idcs))
 
         for idx in idcs:
             # print('%s_label.npy' % idx)
@@ -258,10 +258,11 @@ class Crop(object):
         normsize = np.array(crop_size).astype('float32') / np.array(imgs.shape[1:])
         # print('normstart %s' % normstart)
         # print('normsize %s' % normsize)
-        xx, yy, zz = np.meshgrid(np.linspace(normstart[0], normstart[0] + normsize[0], self.crop_size[0] // self.stride),
-                                 np.linspace(normstart[1], normstart[1] + normsize[1], self.crop_size[1] // self.stride),
-                                 np.linspace(normstart[2], normstart[2] + normsize[2], self.crop_size[2] // self.stride),
-                                 indexing='ij')
+        xx, yy, zz = np.meshgrid(
+            np.linspace(normstart[0], normstart[0] + normsize[0], self.crop_size[0] // self.stride),
+            np.linspace(normstart[1], normstart[1] + normsize[1], self.crop_size[1] // self.stride),
+            np.linspace(normstart[2], normstart[2] + normsize[2], self.crop_size[2] // self.stride),
+            indexing='ij')
         coord = np.concatenate([xx[np.newaxis, ...], yy[np.newaxis, ...], zz[np.newaxis, :]], 0).astype('float32')
 
         pad = [[0, 0]]
