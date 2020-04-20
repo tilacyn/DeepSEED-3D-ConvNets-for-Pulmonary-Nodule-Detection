@@ -84,6 +84,7 @@ class Test:
         tp = 0
         n = 0
         p = 0
+        fp = 0
 
         # for i, (data, target, coord) in enumerate([dataset[0], dataset[0], dataset[0]]):
         #     # data = torch.autograd.Variable(data.cuda())
@@ -110,8 +111,10 @@ class Test:
                 correct_positive = False
                 for bbox in pred:
                     if iou(bbox[1:], true[0][1:]) > 0.5:
-                        tp += 1
-                        break
+                        correct_positive = True
+                    else:
+                        fp +=1
+                tp += int(correct_positive)
             else:
                 n += 1
                 if len(pred) == 0:
