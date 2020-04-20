@@ -396,6 +396,23 @@ def iou(box0, box1):
     union = box0[3] * box0[3] * box0[3] + box1[3] * box1[3] * box1[3] - intersection
     return intersection / union
 
+def dice(box0, box1):
+    r0 = box0[3] / 2
+    s0 = box0[:3] - r0
+    e0 = box0[:3] + r0
+
+    r1 = box1[3] / 2
+    s1 = box1[:3] - r1
+    e1 = box1[:3] + r1
+
+    overlap = []
+    for i in range(len(s0)):
+        overlap.append(max(0, min(e0[i], e1[i]) - max(s0[i], s1[i])))
+
+    intersection = overlap[0] * overlap[1] * overlap[2]
+    union = box0[3] * box0[3] * box0[3] + box1[3] * box1[3] * box1[3]
+    return 2 * intersection / union
+
 
 def acc(pbb, lbb, conf_th, nms_th, detect_th):
     pbb = pbb[pbb[:, 0] >= conf_th]

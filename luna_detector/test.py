@@ -43,42 +43,15 @@ class Test:
 
     def test(self):
         dataset = LIDCDataset(self.data_path, self.config, self.start, self.end, phase='test')
-        data_loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1,
-                                 pin_memory=True)
-        tn = 0
-        tp = 0
-        n = 0
-        p = 0
-        for i, (data, target, coord, _) in enumerate(data_loader):
-            data = torch.autograd.Variable(data.cuda())
-            target = torch.autograd.Variable(target.cuda())
-            coord = torch.autograd.Variable(coord.cuda())
-            data = data.type(torch.cuda.FloatTensor)
-            coord = coord.type(torch.cuda.FloatTensor)
+        return self.common_test(dataset)
 
-            output = self.net(data, coord)
-            pred = self.gp(output.cpu().detach().numpy()[0], self.thr)
-            true = self.gp(target.cpu().detach().numpy()[0], 0.8)
-            if len(true) > 0:
-                p += 1
-                correct_positive = False
-                for bbox in pred:
-                    if iou(bbox[1:], true[0][1:]) < 3:
-                        tp += 1
-                        break
-            else:
-                n += 1
-                if len(pred) == 0:
-                    tn += 1
-
-            print('pred: {}'.format(pred))
-            print('true: {}'.format(true))
-            print(tp, tn, p, n)
-        return [tp, tn, p, n]
 
     def test_luna(self):
         luna_train = np.load('./luna_train.npy')
         dataset = LungNodule3Ddetector(self.data_path, luna_train, self.config, start=self.start, end=self.end)
+        return self.common_test(dataset)
+
+    def common_test(self, dataset):
         data_loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1,
                                  pin_memory=True)
         tn = 0
@@ -86,26 +59,39 @@ class Test:
         n = 0
         p = 0
         fp = 0
+        dices = []
+        target_volumes = []
+        output_volumes = []
 
-        for i, (data, target, coord) in enumerate(data_loader):
-            data = torch.autograd.Variable(data.cuda())
-            target = torch.autograd.Variable(target.cuda())
-            coord = torch.autograd.Variable(coord.cuda())
+        for i, tpl in enumerate(data_loader):
+            data = torch.autograd.Variable(tpl[0].cuda())
+            target = torch.autograd.Variable(tpl[1].cuda())
+            coord = torch.autograd.Variable(tpl[2].cuda())
             data = data.type(torch.cuda.FloatTensor)
             coord = coord.type(torch.cuda.FloatTensor)
 
             output = self.net(data, coord)
             pred = self.gp(output.cpu().detach().numpy()[0], self.thr)
             true = self.gp(target.cpu().detach().numpy()[0], 0.8)
+            current_dice = 0
             if len(true) > 0:
                 p += 1
                 correct_positive = False
+                current_dices = []
                 for bbox in pred:
                     if iou(bbox[1:], true[0][1:]) > 0.5:
                         correct_positive = True
                     else:
-                        fp +=1
+                        fp += 1
+                    current_dices.append([bbox[4], dice(bbox[1:], true[0][1:])])
+                current_dices = np.array(current_dices)
                 tp += int(correct_positive)
+                max_dice_idx = np.argmax(current_dices[:, 1])
+                current_dice = current_dices[max_dice_idx][1]
+                r = current_dices[max_dice_idx][0]
+                dices.append(current_dice)
+                target_volumes.append(true[0][4])
+                output_volumes.append(r)
             else:
                 n += 1
                 if len(pred) == 0:
@@ -113,9 +99,8 @@ class Test:
 
             print('pred: {}'.format(pred))
             print('true: {}'.format(true))
-            print(tp, tn, p, n, fp)
-        return [tp, tn, p, n, fp]
-
+            print(tp, tn, p, n, fp, current_dice)
+        return [tp, tn, p, n, fp], dices, target_volumes, output_volumes
     def validate(self, start, end):
         net = self.net
         loss = self.loss
