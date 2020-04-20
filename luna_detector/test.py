@@ -62,7 +62,7 @@ class Test:
                 p += 1
                 correct_positive = False
                 for bbox in pred:
-                    if euclidean(bbox[1:], true[0][1:]) < 3:
+                    if iou(bbox[1:], true[0][1:]) < 3:
                         tp += 1
                         break
             else:
@@ -109,8 +109,9 @@ class Test:
                 p += 1
                 correct_positive = False
                 for bbox in pred:
-                    if euclidean(bbox[1:], true[0][1:]) < 3:
+                    if iou(bbox[1:], true[0][1:]) > 0.5:
                         tp += 1
+                        break
             else:
                 n += 1
                 if len(pred) == 0:
