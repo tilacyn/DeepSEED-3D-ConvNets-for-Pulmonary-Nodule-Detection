@@ -85,15 +85,15 @@ class Test:
         n = 0
         p = 0
 
-        for i, (data, target, coord) in enumerate([dataset[0], dataset[0], dataset[0]]):
-            # data = torch.autograd.Variable(data.cuda())
-            # target = torch.autograd.Variable(target.cuda())
-            # coord = torch.autograd.Variable(coord.cuda())
-
-            # print(self.gp(target.cpu().detach().numpy()[0], 0.8))
-            print(target.shape)
-            print(self.gp(target, 0.8))
-        return
+        # for i, (data, target, coord) in enumerate([dataset[0], dataset[0], dataset[0]]):
+        #     # data = torch.autograd.Variable(data.cuda())
+        #     # target = torch.autograd.Variable(target.cuda())
+        #     # coord = torch.autograd.Variable(coord.cuda())
+        #
+        #     # print(self.gp(target.cpu().detach().numpy()[0], 0.8))
+        #     print(target.shape)
+        #     print(self.gp(target, 0.8))
+        # return
 
         for i, (data, target, coord) in enumerate(data_loader):
             data = torch.autograd.Variable(data.cuda())
