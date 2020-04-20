@@ -16,7 +16,7 @@ train_5 - random=False
 
 ## 20.04
 
-result for luna 
+trained on luna, tested on luna 
 
 {0: [411, 716, 512, 876, 13346],
  1: [383, 818, 514, 874, 6226],
@@ -26,3 +26,12 @@ result for luna
  5: [135, 872, 513, 875, 241],
  5.5: [110, 881, 507, 881, 155],
  6: [83, 852, 534, 854, 100]}
+ 
+ trained on luna, tested on lidc
+ 
+ {-1.5: [137, 13, 143, 157],
+ -1: [121, 49, 152, 148],
+ -0.5: [90, 90, 163, 137],
+ 0: [77, 88, 171, 129]}
+ 
+ model path: baseline_1/detector_062.ckpt
