@@ -47,7 +47,7 @@ class Test:
         tp = 0
         n = 0
         p = 0
-        for i, (data, target, coord) in enumerate(data_loader):
+        for i, (data, target, coord, _) in enumerate(data_loader):
             data = torch.autograd.Variable(data.cuda())
             target = torch.autograd.Variable(target.cuda())
             coord = torch.autograd.Variable(coord.cuda())
