@@ -84,6 +84,8 @@ class Test:
                     else:
                         fp += 1
                     current_dices.append([bbox[4], dice(bbox[1:], true[0][1:])])
+                if len(pred) == 0:
+                    current_dices.append([-1, 0])
                 current_dices = np.array(current_dices)
                 tp += int(correct_positive)
                 max_dice_idx = np.argmax(current_dices[:, 1])
