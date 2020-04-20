@@ -86,9 +86,9 @@ class Test:
         p = 0
 
         for i, (data, target, coord) in enumerate([dataset[0], dataset[0], dataset[0]]):
-            data = torch.autograd.Variable(data.cuda())
+            # data = torch.autograd.Variable(data.cuda())
             # target = torch.autograd.Variable(target.cuda())
-            coord = torch.autograd.Variable(coord.cuda())
+            # coord = torch.autograd.Variable(coord.cuda())
 
             # print(self.gp(target.cpu().detach().numpy()[0], 0.8))
             print(target.shape)
