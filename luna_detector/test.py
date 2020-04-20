@@ -93,7 +93,7 @@ class Test:
             # print(self.gp(target.cpu().detach().numpy()[0], 0.8))
             print(target.shape)
             print(self.gp(target, 0.8))
-            return
+        return
 
         for i, (data, target, coord) in enumerate(data_loader):
             data = torch.autograd.Variable(data.cuda())
