@@ -8,7 +8,7 @@ LUNA16 can be downloaded from https://luna16.grand-challenge.org/data/
 LIDC-IDR can be downloaded from https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI
 
 -------------------------------------------------------------
-### Evaluatng the trained model
+### Evaluating the trained model
 
 1. Download model from https://drive.google.com/open?id=10Mm4d_OmBOgJ8eusxC1UeU9ClAndMDGQ
 
