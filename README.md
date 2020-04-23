@@ -7,10 +7,61 @@ LUNA16 can be downloaded from https://luna16.grand-challenge.org/data/
 
 LIDC-IDR can be downloaded from https://wiki.cancerimagingarchive.net/display/Public/LIDC-IDRI
 
+-------------------------------------------------------------
+### Evaluatng the trained model
 
+1. Download model from https://drive.google.com/open?id=10Mm4d_OmBOgJ8eusxC1UeU9ClAndMDGQ
 
+2. Place the trained model file into `luna_detector/test_results` directory
+
+3. Download data for evaluation and training from https://drive.google.com/open?id=13UzuBIXNq_IaEhmE7eSy1LwQ2JXAFukJ
+
+4. Extract the npy files from the `preprocess-result-path.zip` archive downloaded on step 3 and make sure you get the following 
+directory `data/preprocess-result-path` with npy files in it. 
+
+5. Go to `luna_detector` folder and run the following code
+```python
+from test import Test
+import numpy as np
+
+result = {}
+# PLEASE CHANGE THE THRESHOLD SPACE IF NEEDED
+for thr in np.linspace(-1.5, 3, 20):
+  # CHANGE path_to_model argument to the relative path of your pretrained model in test_results folder
+  ltest = Test(thr=thr, path_to_model='baseline_3/detector_122.ckpt', start=-70, end=0)
+  result[thr] = ltest.test_luna()
+
+roc_result = {}
+for t in result:
+  res = result[t]
+  roc_result[t] = res[0]
+
+from matplotlib import pyplot as plt
+tnr = []
+tpr = []
+xs = []
+for thr in roc_result:
+  r = roc_result[thr]
+  xs.append(r[-1] / (r[-2] + r[-3]))
+  tpr.append(r[0] / r[2])
+  tnr.append(r[1] / r[3])
+
+plt.plot(xs, tpr, label='tpr')
+plt.plot(xs, tnr, label='tnr')
+plt.ylabel('rate')
+plt.xlim(-0.2, 25)
+plt.ylim(-0.1, 1.1)
+plt.grid()
+plt.xlabel('averape fp / scan')
+plt.legend()
+plt.show()
+```
+
+If everything is OK, you will get the ROC curve on a plot.
 
 -------------------------------------------------------------
+### Training the model (deprecated)
+
 Preprocessing:
 Go to config_training.py, create two directory Luna_data and Preprocess_result_path. Then change directory listed as follows:
 

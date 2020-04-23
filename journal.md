@@ -35,3 +35,17 @@ trained on luna, tested on luna
  0: [77, 88, 171, 129]}
  
  model path: baseline_1/detector_062.ckpt
+ 
+ ## 22.04
+ 
+ todo:
+ 
+ 1. provide real mask radius but not 5
+ 
+ 2. try train model on our custom lidc
+ 
+ 3. GAN ????
+ 
+ 4. roc auc 0.81
+ 
+ 5. 
