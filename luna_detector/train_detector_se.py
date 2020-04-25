@@ -136,7 +136,7 @@ def main():
         datadir = os.path.join('/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection',
                                config_training['preprocess_result_path'])
         print('len lun train', len(luna_train))
-        train_dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train', start=0, end=70)
+        train_dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
     else:
         datadir = '/content/drive/My Drive/dsb2018_topcoders/data'
         train_dataset = LIDCDataset(datadir, config, 0, args.train_len, load=True, random=args.random)
