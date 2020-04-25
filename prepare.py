@@ -257,7 +257,7 @@ def prepare_luna():
                 id = file.split('.mhd')[0]
                 filename = '0' * (3 - len(str(id))) + str(id)
                 content[-1] = 'ElementDataFile = ' + filename + '.raw\n'
-                print(content[-1])
+                # print(content[-1])
             with open(os.path.join(luna_data, file), 'w') as f:
                 f.writelines(content)
 
