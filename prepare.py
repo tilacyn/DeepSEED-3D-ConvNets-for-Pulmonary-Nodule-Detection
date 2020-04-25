@@ -94,6 +94,7 @@ def lumTrans(img):
 
 def savenpy_luna(id, annos, filelist, luna_segment, luna_data, savepath):
     print('enter save npy')
+    print(savepath)
     islabel = True
     isClean = True
     resolution = np.array([1, 1, 1])
@@ -193,6 +194,7 @@ def preprocess_luna():
         # partial_savenpy_luna = partial(savenpy_luna, annos=annos, filelist=filelist,
         #                                luna_segment=luna_segment, luna_data=luna_data, savepath=savepath)
         print('savenpy !!!')
+        print(len(filelist))
         for i in range(len(filelist)):
             savenpy_luna(i, annos, filelist, luna_segment, luna_data, savepath)
 

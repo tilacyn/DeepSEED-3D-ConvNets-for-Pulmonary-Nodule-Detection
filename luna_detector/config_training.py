@@ -3,7 +3,7 @@ config = {'luna_raw': 'data/luna-raw',
           'lidc-npy' : '/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection/data/lidc-npy',
 
           'luna_data': 'data/luna-data',
-          'preprocess_result_path': 'data/preprocess-result-path',
+          'preprocess_result_path': 'data/preprocess-result-path-1',
 
           'luna_abbr': './luna_detector/labels/shorter.csv',
           'luna_label': 'luna_detector/labels/annos.csv',
