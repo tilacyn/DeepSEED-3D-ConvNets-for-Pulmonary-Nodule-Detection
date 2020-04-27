@@ -84,7 +84,7 @@ def main():
 
     if args.resume:
         print("=> loading checkpoint '{}'".format(args.resume))
-        checkpoint = torch.load(save_dir + 'detector_' + args.resume)
+        checkpoint = torch.load('test_results/{}'.format(args.resume))
         start_epoch = checkpoint['epoch']
         net.load_state_dict(checkpoint['state_dict'])
 
@@ -116,7 +116,7 @@ def main():
         split_comber = SplitComb(sidelen, config['max_stride'], config['stride'], margin, config['pad_value'])
         dataset = LungNodule3Ddetector(
             datadir,
-            luna_train,
+            luna_test,
             config,
             phase='test',
             split_comber=split_comber

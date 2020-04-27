@@ -22,7 +22,7 @@ import pdb
 
 
 class LungNodule3Ddetector(Dataset):
-    def __init__(self, data_dir, split_path, config, phase='train', split_comber=None, start=0, end=0):
+    def __init__(self, data_dir, split_path, config, phase='train', split_comber=None, start=0, end=0, r_rand=None):
         assert (phase == 'train' or phase == 'val' or phase == 'test')
         self.phase = phase
         self.max_stride = config['max_stride']
@@ -32,7 +32,7 @@ class LungNodule3Ddetector(Dataset):
         sizelim3 = config['sizelim3'] / config['reso']
         self.blacklist = config['blacklist']
         self.isScale = config['aug_scale']
-        self.r_rand = config['r_rand_crop']
+        self.r_rand = config['r_rand_crop'] if r_rand is None else r_rand
         self.augtype = config['augtype']
         self.pad_value = config['pad_value']
         self.split_comber = split_comber
