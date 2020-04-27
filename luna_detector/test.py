@@ -46,9 +46,9 @@ class Test:
         return self.common_test(dataset)
 
 
-    def test_luna(self):
+    def test_luna(self, r_rand=0.9):
         luna_test = np.load('./luna_test.npy')
-        dataset = LungNodule3Ddetector(self.data_path, luna_test, self.config, start=0, end=0, r_rand=0.9)
+        dataset = LungNodule3Ddetector(self.data_path, luna_test, self.config, start=0, end=0, r_rand=r_rand)
         return self.common_test(dataset)
 
     def common_test(self, dataset):
