@@ -17,7 +17,7 @@ from os.path import join as opjoin
 
 
 class Test:
-    def __init__(self, data_path=None, thr=0, path_to_model='', start=0, end=0):
+    def __init__(self, data_path=None, thr=0, path_to_model='', start=0, end=0, iou_threshold=0.5):
         if data_path is None:
             self.data_path = os.path.join('/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection',
                                    config_training['preprocess_result_path'])
@@ -33,6 +33,7 @@ class Test:
         checkpoint = torch.load(opjoin(self.luna_path, 'test_results', path_to_model))
         net.load_state_dict(checkpoint['state_dict'])
         self.net = net
+        self.iou_threshold = iou_threshold
         self.config = config
         self.loss = loss
         self.gp = GetPBB(config)
@@ -59,6 +60,7 @@ class Test:
         n = 0
         p = 0
         fp = 0
+        total_pred_len = 0
         dices = []
         target_volumes = []
         output_volumes = []
@@ -79,7 +81,7 @@ class Test:
                 correct_positive = False
                 current_dices = []
                 for bbox in pred:
-                    if iou(bbox[1:], true[0][1:]) > 0.5:
+                    if iou(bbox[1:], true[0][1:]) > self.iou_threshold:
                         correct_positive = True
                     else:
                         fp += 1
@@ -94,6 +96,7 @@ class Test:
                 dices.append(current_dice)
                 target_volumes.append(true[0][4])
                 output_volumes.append(r)
+                total_pred_len += len(pred)
             else:
                 n += 1
                 if len(pred) == 0:
@@ -102,7 +105,7 @@ class Test:
             print('pred: {}'.format(pred))
             print('true: {}'.format(true))
             print(tp, tn, p, n, fp, current_dice)
-        return [tp, tn, p, n, fp], dices, target_volumes, output_volumes
+        return [tp, tn, p, n, fp, total_pred_len], dices, target_volumes, output_volumes
     def validate(self, start, end):
         net = self.net
         loss = self.loss
