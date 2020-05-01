@@ -78,12 +78,12 @@ class Test:
             current_dice = 0
             if len(true) > 0:
                 p += 1
-                correct_positive = False
+                correct_positive = 0
                 current_dices = []
                 for bbox in pred:
                     cdice = dice(bbox[1:], true[0][1:])
                     if cdice > self.iou_threshold:
-                        correct_positive = True
+                        correct_positive = 1
                     else:
                         fp += 1
                     print('dice: {}'.format(cdice))
@@ -91,7 +91,7 @@ class Test:
                 if len(pred) == 0:
                     current_dices.append([-1, 0])
                 current_dices = np.array(current_dices)
-                tp += int(correct_positive)
+                tp += correct_positive
                 max_dice_idx = np.argmax(current_dices[:, 1])
                 current_dice = current_dices[max_dice_idx][1]
                 r = current_dices[max_dice_idx][0]
