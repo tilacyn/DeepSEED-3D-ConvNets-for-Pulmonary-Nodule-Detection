@@ -81,10 +81,12 @@ class Test:
                 correct_positive = False
                 current_dices = []
                 for bbox in pred:
-                    if dice(bbox[1:], true[0][1:]) > self.iou_threshold:
+                    cdice = dice(bbox[1:], true[0][1:])
+                    if cdice > self.iou_threshold:
                         correct_positive = True
                     else:
                         fp += 1
+                    print('dice: {}'.format(cdice))
                     current_dices.append([bbox[4], dice(bbox[1:], true[0][1:])])
                 if len(pred) == 0:
                     current_dices.append([-1, 0])
