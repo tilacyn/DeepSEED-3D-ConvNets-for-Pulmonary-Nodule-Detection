@@ -81,7 +81,7 @@ class Test:
                 correct_positive = False
                 current_dices = []
                 for bbox in pred:
-                    if iou(bbox[1:], true[0][1:]) > self.iou_threshold:
+                    if dice(bbox[1:], true[0][1:]) > self.iou_threshold:
                         correct_positive = True
                     else:
                         fp += 1
