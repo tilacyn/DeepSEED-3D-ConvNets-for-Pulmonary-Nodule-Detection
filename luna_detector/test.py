@@ -86,7 +86,7 @@ class Test:
                         correct_positive = 1
                     else:
                         fp += 1
-                    print('dice: {}'.format(cdice))
+                    # print('dice: {}'.format(cdice))
                     current_dices.append([bbox[4], dice(bbox[1:], true[0][1:])])
                 if len(pred) == 0:
                     current_dices.append([-1, 0])
