@@ -65,10 +65,10 @@ class Test:
         return self.common_test(dataset)
 
 
-    def test_luna(self, r_rand=0.9):
-        return self.common_test()
+    def test_luna(self, iou_threshold):
+        return self.common_test(iou_threshold=iou_threshold)
 
-    def common_test(self):
+    def common_test(self, iou_threshold):
         tn = 0
         tp = 0
         n = 0
@@ -89,7 +89,7 @@ class Test:
                 current_dices = []
                 for bbox in pred:
                     cdice = dice(bbox[1:], true[0][1:])
-                    if cdice > self.iou_threshold:
+                    if cdice > iou_threshold:
                         correct_positive = 1
                     else:
                         fp += 1
