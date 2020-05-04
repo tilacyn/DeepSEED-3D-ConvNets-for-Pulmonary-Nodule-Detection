@@ -65,10 +65,10 @@ class Test:
         return self.common_test(dataset)
 
 
-    def test_luna(self, iou_threshold):
-        return self.common_test(iou_threshold=iou_threshold)
+    def test_luna(self, thr, iou_threshold):
+        return self.common_test(thr=thr, iou_threshold=iou_threshold)
 
-    def common_test(self, iou_threshold):
+    def common_test(self, thr, iou_threshold):
         tn = 0
         tp = 0
         n = 0
@@ -80,7 +80,7 @@ class Test:
         output_volumes = []
         for output, target in zip(self.outputs, self.targets):
 
-            pred = self.gp(output, self.thr)
+            pred = self.gp(output, thr)
             true = self.gp(target, 0.8)
             current_dice = 0
             if len(true) > 0:
