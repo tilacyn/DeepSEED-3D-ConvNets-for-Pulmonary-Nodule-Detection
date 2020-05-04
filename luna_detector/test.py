@@ -17,7 +17,7 @@ from os.path import join as opjoin
 
 
 class Test:
-    def __init__(self, data_path=None, thr=0, path_to_model='', start=0, end=0, iou_threshold=0.5):
+    def __init__(self, data_path=None, thr=0, path_to_model='', start=0, end=0, iou_threshold=0.5, r_rand=0.9):
         if data_path is None:
             self.data_path = os.path.join('/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection',
                                    config_training['preprocess_result_path'])
@@ -41,6 +41,24 @@ class Test:
         self.start = start
         self.end = end
 
+        luna_test = np.load('./luna_test.npy')
+        dataset = LungNodule3Ddetector(self.data_path, luna_test, self.config, start=0, end=0, r_rand=r_rand)
+        data_loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1,
+                                 pin_memory=True)
+        self.outputs = []
+        self.targets = []
+        for i, tpl in enumerate(data_loader):
+            data = torch.autograd.Variable(tpl[0].cuda())
+            target = torch.autograd.Variable(tpl[1].cuda())
+            coord = torch.autograd.Variable(tpl[2].cuda())
+            data = data.type(torch.cuda.FloatTensor)
+            coord = coord.type(torch.cuda.FloatTensor)
+
+            output = self.net(data, coord)
+            self.outputs.append(output.cpu().detach().numpy()[0])
+            self.targets.append(target.cpu().detach().numpy()[0])
+
+
 
     def test(self):
         dataset = LIDCDataset(self.data_path, self.config, self.start, self.end, phase='test')
@@ -48,13 +66,9 @@ class Test:
 
 
     def test_luna(self, r_rand=0.9):
-        luna_test = np.load('./luna_test.npy')
-        dataset = LungNodule3Ddetector(self.data_path, luna_test, self.config, start=0, end=0, r_rand=r_rand)
-        return self.common_test(dataset)
+        return self.common_test()
 
-    def common_test(self, dataset):
-        data_loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1,
-                                 pin_memory=True)
+    def common_test(self):
         tn = 0
         tp = 0
         n = 0
@@ -64,17 +78,10 @@ class Test:
         dices = []
         target_volumes = []
         output_volumes = []
+        for output, target in zip(self.outputs, self.targets):
 
-        for i, tpl in enumerate(data_loader):
-            data = torch.autograd.Variable(tpl[0].cuda())
-            target = torch.autograd.Variable(tpl[1].cuda())
-            coord = torch.autograd.Variable(tpl[2].cuda())
-            data = data.type(torch.cuda.FloatTensor)
-            coord = coord.type(torch.cuda.FloatTensor)
-
-            output = self.net(data, coord)
-            pred = self.gp(output.cpu().detach().numpy()[0], self.thr)
-            true = self.gp(target.cpu().detach().numpy()[0], 0.8)
+            pred = self.gp(output, self.thr)
+            true = self.gp(target, 0.8)
             current_dice = 0
             if len(true) > 0:
                 p += 1
