@@ -73,7 +73,7 @@ class Test:
         tp = 0
         n = 0
         p = 0
-        fp = 0
+        fp_bbox = 0
         total_pred_len = 0
         dices = []
         target_volumes = []
@@ -92,13 +92,14 @@ class Test:
                     if cdice > iou_threshold:
                         correct_positive = 1
                     else:
-                        fp += 1
+                        fp_bbox += 1
                     # print('dice: {}'.format(cdice))
                     current_dices.append([bbox[4], dice(bbox[1:], true[0][1:])])
                 if len(pred) == 0:
                     current_dices.append([-1, 0])
                 current_dices = np.array(current_dices)
-                tp += correct_positive
+                if len(pred) > 0:
+                    tp += 1
                 max_dice_idx = np.argmax(current_dices[:, 1])
                 current_dice = current_dices[max_dice_idx][1]
                 r = current_dices[max_dice_idx][0]
@@ -113,8 +114,8 @@ class Test:
 
             print('pred: {}'.format(pred))
             print('true: {}'.format(true))
-            print(tp, tn, p, n, fp, current_dice)
-        return [tp, tn, p, n, fp, total_pred_len], dices, target_volumes, output_volumes
+            print(tp, tn, p, n, fp_bbox, current_dice)
+        return [tp, tn, p, n, fp_bbox, total_pred_len], dices
     def validate(self, start, end):
         net = self.net
         loss = self.loss
