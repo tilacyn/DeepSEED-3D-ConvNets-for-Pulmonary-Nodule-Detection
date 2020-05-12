@@ -24,7 +24,7 @@ import pdb
 def get_filenames_and_labels(idcs, start, end, data_dir):
     new_idcs = []
     for f in idcs:
-        cond = os.path.exists(os.path.join(idcs, '%s_label.npy' % f))
+        cond = os.path.exists(os.path.join(data_dir, '%s_label.npy' % f))
         if cond:
             new_idcs.append(f)
     idcs = new_idcs
