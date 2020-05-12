@@ -21,6 +21,30 @@ from scipy.ndimage.morphology import binary_dilation, generate_binary_structure
 import pdb
 
 
+def get_filenames_and_labels(idcs, start, end, data_dir):
+    new_idcs = []
+    for f in idcs:
+        cond = os.path.exists(os.path.join(idcs, '%s_label.npy' % f))
+        if cond:
+            new_idcs.append(f)
+    idcs = new_idcs
+
+    print('len idcs ', len(idcs))
+    idcs = idcs[start: len(idcs) - end]
+    filenames = [os.path.join(data_dir, '%s_clean.npy' % idx) for idx in idcs]
+
+    labels = []
+
+    for idx in idcs:
+        l = np.load(os.path.join(data_dir, '%s_label.npy' % idx))
+        if np.all(l == 0):
+            l = np.array([])
+        labels.append(l)
+    print('len(labels) ', len(labels))
+
+    sample_bboxes = labels
+    return filenames, sample_bboxes
+
 class LungNodule3Ddetector(Dataset):
     def __init__(self, data_dir, split_path, config, phase='train', split_comber=None, start=0, end=0, r_rand=None):
         assert (phase == 'train' or phase == 'val' or phase == 'test')
@@ -36,38 +60,13 @@ class LungNodule3Ddetector(Dataset):
         self.augtype = config['augtype']
         self.pad_value = config['pad_value']
         self.split_comber = split_comber
-        # idcs = np.load(split_path)
         idcs = split_path
+        self.filenames, self.sample_bboxes = get_filenames_and_labels(idcs, start, end, data_dir)
 
-        if phase != 'kek':
-            new_idcs = []
-            for f in idcs:
-                cond = os.path.exists(os.path.join(data_dir, '%s_label.npy' % f))
-                # print(f, ' ', cond)
-                # print(os.path.join(data_dir, '%s_label.npy' % f))
-                if cond:
-                    new_idcs.append(f)
-            idcs = new_idcs
-
-        print('len idcs ', len(idcs))
-        idcs = idcs[start: len(idcs) - end]
-        self.filenames = [os.path.join(data_dir, '%s_clean.npy' % idx) for idx in idcs]
-
-        labels = []
-
-        for idx in idcs:
-            # print('%s_label.npy' % idx)
-            l = np.load(os.path.join(data_dir, '%s_label.npy' % idx))
-            if np.all(l == 0):
-                l = np.array([])
-            labels.append(l)
-        print('len(labels) ', len(labels))
-
-        self.sample_bboxes = labels
         if self.phase != 'test':
             self.bboxes = []
 
-            for i, l in enumerate(labels):
+            for i, l in enumerate(self.sample_bboxes):
                 if len(l) > 0:
                     for t in l:
                         if t[3] > sizelim:
@@ -85,23 +84,12 @@ class LungNodule3Ddetector(Dataset):
         t = time.time()
         np.random.seed(int(str(t % 1)[2:7]))  # seed according to time
 
-        # isRandomImg = False
-        #     else:
-        #         isRandom = False
-        # else:
-        #     isRandom = False
-
         isRandomImg = False
         if idx >= len(self.bboxes):
             idx = idx % len(self.bboxes)
             isRandomImg = np.random.randint(2)
 
         isRandom = np.random.randint(2)
-
-        # print('isRandom ', isRandom)
-        # print('isRandomImg ', isRandomImg)
-        # isRandomImg = False
-        # isRandom = False
 
         if self.phase != 'test':
             if not isRandomImg:
