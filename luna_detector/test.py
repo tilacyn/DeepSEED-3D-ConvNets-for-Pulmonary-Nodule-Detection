@@ -49,6 +49,8 @@ class Test:
             coord = torch.autograd.Variable(tpl[2].cuda())
             data = data.type(torch.cuda.FloatTensor)
             coord = coord.type(torch.cuda.FloatTensor)
+            print(data.shape)
+            print(coord.shape)
 
             output = self.net(data, coord)
             self.outputs.append(output.cpu().detach().numpy()[0])
