@@ -29,7 +29,6 @@ class AbstractTest:
         checkpoint = torch.load(opjoin(luna_path, 'test_results', path_to_model))
         net.load_state_dict(checkpoint['state_dict'])
         self.net = net
-        self.iou_threshold = iou_threshold
         self.config = config
         self.loss = loss
         self.gp = GetPBB(config)
