@@ -46,7 +46,7 @@ class AbstractTest:
 
     def predict_on_data(self, data_loader):
         outputs, targets = [], []
-        for i, data, target, coord in enumerate(data_loader):
+        for i, (data, target, coord) in enumerate(data_loader):
             data, target, coord = data.cuda(), target.cuda(), coord.cuda()
             data = data.type(torch.cuda.FloatTensor)
             coord = coord.type(torch.cuda.FloatTensor)
