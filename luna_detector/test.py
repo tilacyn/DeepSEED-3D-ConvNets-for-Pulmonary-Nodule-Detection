@@ -56,7 +56,7 @@ class AbstractTest:
             output = self.net(data, coord)
             outputs.append(output.cpu().detach().numpy()[0])
             targets.append(target)
-        return outputs, [self.transform_target(targets)]
+        return outputs, [self.transform_target(target) for target in targets]
 
     @abstractmethod
     def transform_target(self, target):
