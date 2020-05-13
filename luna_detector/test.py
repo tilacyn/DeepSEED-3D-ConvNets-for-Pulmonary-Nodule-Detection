@@ -19,7 +19,7 @@ luna_path = opjoin(base_path, 'luna_detector')
 
 
 class AbstractTest:
-    def __init__(self, data_path=None, thr=0, path_to_model='', start=0, end=0, iou_threshold=0.5):
+    def __init__(self, data_path=None, path_to_model='', start=0, end=0):
         self.data_path = default_data_path if data_path is None else data_path
         model = import_module('res18_se')
         print('creating model')
@@ -33,7 +33,6 @@ class AbstractTest:
         self.config = config
         self.loss = loss
         self.gp = GetPBB(config)
-        self.thr = thr
         self.start = start
         self.end = end
         dataset = self.create_dataset()
