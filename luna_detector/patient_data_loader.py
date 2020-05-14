@@ -34,9 +34,9 @@ class PatientDataLoader(Dataset):
         crops = crops.reshape(flatten_shape)
         crops = crops[:, np.newaxis, ...]
         labels = labels.reshape(-1)
-        xx, yy, zz = np.meshgrid(np.linspace(-0.5, 0.5, imgs.shape[1] // self.stride),
-                                 np.linspace(-0.5, 0.5, imgs.shape[2] // self.stride),
-                                 np.linspace(-0.5, 0.5, imgs.shape[3] // self.stride), indexing='ij')
+        xx, yy, zz = np.meshgrid(np.linspace(-0.5, 0.5, crops.shape[2] // self.stride),
+                                 np.linspace(-0.5, 0.5, crops.shape[3] // self.stride),
+                                 np.linspace(-0.5, 0.5, crops.shape[4] // self.stride), indexing='ij')
         coord = np.concatenate([xx[np.newaxis, ...], yy[np.newaxis, ...], zz[np.newaxis, :]], 0).astype('float32')
 
         crops = (crops.astype(np.float32) - 128) / 128
