@@ -44,23 +44,12 @@ class AbstractTest:
     def create_dataset(self):
         pass
 
-    def predict_on_data(self, data_loader):
-        outputs, targets = [], []
-        for i, (data, target, coord) in enumerate(data_loader):
-            data, target, coord = data.cuda(), target.cuda(), coord.cuda()
-            data = data.type(torch.cuda.FloatTensor)
-            coord = coord.type(torch.cuda.FloatTensor)
-            print(data.shape)
-            print(coord.shape)
-
-            output = self.net(data, coord)
-            outputs.append(output.cpu().detach().numpy()[0])
-            targets.append(target)
-        return outputs, [self.transform_target(target) for target in targets]
-
     @abstractmethod
-    def transform_target(self, target):
+    def predict_on_data(self, data_loader):
         pass
+
+    def transform_target(self, target):
+        return target.cpu().detach().numpy()[0]
 
     @abstractmethod
     def is_positive(self, target):
@@ -97,8 +86,20 @@ class SimpleTest(AbstractTest):
     def is_positive(self, target):
         return len(self.gp(target, 0.8)) > 0
 
-    def transform_target(self, target):
-        return target.cpu().detach().numpy()[0]
+    def predict_on_data(self, data_loader):
+        outputs, targets = [], []
+        for i, (data, target, coord) in enumerate(data_loader):
+            data, target, coord = data.cuda(), target.cuda(), coord.cuda()
+            data = data.type(torch.cuda.FloatTensor)
+            coord = coord.type(torch.cuda.FloatTensor)
+            print(data.shape)
+            print(coord.shape)
+
+            output = self.net(data, coord)
+            outputs.append(output.cpu().detach().numpy()[0])
+            targets.append(target)
+        return outputs, [self.transform_target(target) for target in targets]
+
 
     def test_luna(self, threshold):
         return self.common_test(threshold=threshold)
@@ -111,12 +112,23 @@ class PatientTest(AbstractTest):
         dataset = PatientDataLoader(self.data_path, luna_test, self.config, start=0, end=0)
         return dataset
 
-    def transform_target(self, target):
-        return target.cpu().detach().numpy()[0]
-
-
     def is_positive(self, target):
         return target
+
+    def predict_on_data(self, data_loader):
+        outputs, targets = [], []
+        for i, (data, target, coord) in enumerate(data_loader):
+            for crop, label in zip(data, target):
+                crop, label, coord = crop.cuda(), label.cuda(), coord.cuda()
+                crop = crop.type(torch.cuda.FloatTensor)
+                coord = coord.type(torch.cuda.FloatTensor)
+                print(crop.shape)
+                print(coord.shape)
+
+                output = self.net(crop, coord)
+                outputs.append(output.cpu().detach().numpy()[0])
+                targets.append(label)
+        return outputs, [self.transform_target(target) for target in targets]
 
     def test_luna(self, threshold):
         return self.common_test(threshold=threshold)

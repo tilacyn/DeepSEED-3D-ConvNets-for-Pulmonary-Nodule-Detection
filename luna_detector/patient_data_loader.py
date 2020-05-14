@@ -38,8 +38,8 @@ class PatientDataLoader(Dataset):
                                  np.linspace(-0.5, 0.5, imgs.shape[3] // self.stride), indexing='ij')
         coord = np.concatenate([xx[np.newaxis, ...], yy[np.newaxis, ...], zz[np.newaxis, :]], 0).astype('float32')
 
-        imgs = (imgs.astype(np.float32) - 128) / 128
-        return imgs, labels, coord
+        crops = (crops.astype(np.float32) - 128) / 128
+        return crops, labels, coord
 
     def __len__(self):
         return len(self.sample_bboxes)
