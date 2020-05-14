@@ -24,26 +24,14 @@ class PatientDataLoader(Dataset):
         # idcs = np.load(split_path)
         idcs = split_path
         self.filenames, self.sample_bboxes = get_filenames_and_labels(idcs, start, end, data_dir)
-        self.bboxes = []
-
-        for i, l in enumerate(self.sample_bboxes):
-            if len(l) > 0:
-                for t in l:
-                    if t[3] > sizelim:
-                        self.bboxes += [[np.concatenate([[i], t])]]
-                    if t[3] > sizelim2:
-                        self.bboxes += [[np.concatenate([[i], t])]] * 2
-                    if t[3] > sizelim3:
-                        self.bboxes += [[np.concatenate([[i], t])]] * 4
-        self.bboxes = np.concatenate(self.bboxes, axis=0)
         self.label_mapping = LabelMapping(config, 'train')
         self.cropper = Cropper(config)
 
     def __getitem__(self, idx):
-        bbox = self.bboxes[idx]
-        filename = self.filenames[int(bbox[0])]
+        # bbox = self.bboxes[idx]
+        filename = self.filenames[idx]
         imgs = np.load(filename)
-        bboxes = self.sample_bboxes[int(bbox[0])]
+        bboxes = self.sample_bboxes[idx]
         crops, labels = self.cropper.crop(imgs, bboxes)
         flatten_shape = [-1, 64, 64, 64]
         crops.reshape(flatten_shape)
@@ -55,6 +43,9 @@ class PatientDataLoader(Dataset):
 
         imgs = (imgs.astype(np.float32) - 128) / 128
         return imgs, labels, coord
+
+    def __len__(self):
+        return len(self.sample_bboxes)
 
 
 class Cropper(object):
