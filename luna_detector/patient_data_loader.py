@@ -32,7 +32,7 @@ class PatientDataLoader(Dataset):
         crops, labels = self.cropper.crop(imgs[0], bboxes)
         flatten_shape = [-1, 64, 64, 64]
         crops.reshape(flatten_shape)
-        labels.reshape(flatten_shape)
+        labels.reshape(-1)
         xx, yy, zz = np.meshgrid(np.linspace(-0.5, 0.5, imgs.shape[1] // self.stride),
                                  np.linspace(-0.5, 0.5, imgs.shape[2] // self.stride),
                                  np.linspace(-0.5, 0.5, imgs.shape[3] // self.stride), indexing='ij')
