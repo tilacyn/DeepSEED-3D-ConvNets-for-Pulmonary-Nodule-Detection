@@ -59,7 +59,6 @@ class AbstractTest:
         tn, tp, n, p = 0, 0, 0, 0
         for output, target in zip(self.outputs, self.targets):
             pred = self.gp(output, threshold)
-            true = self.gp(target, 0.8)
             if self.is_positive(target):
                 p += 1
                 if len(pred) > 0:
@@ -68,8 +67,8 @@ class AbstractTest:
                 n += 1
                 if len(pred) == 0:
                     tn += 1
-            print('pred: {}'.format(pred))
-            print('true: {}'.format(true))
+            # print('pred: {}'.format(pred))
+            # print('true: {}'.format(true))
             print(tp, tn, p, n)
         return [tp, tn, p, n]
 
