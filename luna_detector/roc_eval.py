@@ -116,10 +116,12 @@ class PatientTest(AbstractTest):
 
     def predict_on_data(self, data_loader):
         outputs, targets = [], []
-        for i, (data, target, coord) in enumerate(data_loader):
+        for i, (data, one_scan_labels, coord) in enumerate(data_loader):
             print('data shape ', data.shape)
+            print('data shape ', one_scan_labels.shape)
             data = data.transpose(0, 1)
-            for crop, label in zip(data, target):
+            one_scan_labels = one_scan_labels.transpose(0, 1)
+            for crop, label in zip(data, one_scan_labels):
                 print('crop shape ', crop.shape)
                 crop, label, coord = crop.cuda(), label.cuda(), coord.cuda()
                 crop = crop.type(torch.cuda.FloatTensor)
