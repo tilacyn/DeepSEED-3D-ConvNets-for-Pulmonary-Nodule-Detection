@@ -50,7 +50,7 @@ class PatientDataLoader(Dataset):
 
 class Cropper(object):
     def __init__(self, config):
-        self.delta = 2
+        self.delta = 0
         self.crop_size = config['crop_size']
         self.bound_size = config['bound_size']
         self.stride = config['stride']
@@ -79,7 +79,7 @@ class Cropper(object):
             def has_label(bbox, delta):
                 left_bbox_coord = bbox[:-1] - bbox[-1]
                 right_bbox_coord = bbox[:-1] + bbox[-1]
-                is_bbox_corner_inside = lambda corner: corner > left_coord - delta and corner < right_coord + delta
+                is_bbox_corner_inside = lambda corner: np.all(corner > left_coord + delta) and np.all(corner < right_coord - delta)
                 return is_bbox_corner_inside(left_bbox_coord) or is_bbox_corner_inside(right_bbox_coord)
 
             for bbox in target:
