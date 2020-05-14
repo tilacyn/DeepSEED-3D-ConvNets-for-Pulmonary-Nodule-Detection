@@ -16,9 +16,6 @@ def pad(crop):
 
 class PatientDataLoader(Dataset):
     def __init__(self, data_dir, split_path, config, split_comber=None, start=0, end=0):
-        sizelim = config['sizelim'] / config['reso']
-        sizelim2 = config['sizelim2'] / config['reso']
-        sizelim3 = config['sizelim3'] / config['reso']
         self.stride = config['stride']
         self.split_comber = split_comber
         # idcs = np.load(split_path)
@@ -32,7 +29,7 @@ class PatientDataLoader(Dataset):
         filename = self.filenames[idx]
         imgs = np.load(filename)
         bboxes = self.sample_bboxes[idx]
-        crops, labels = self.cropper.crop(imgs, bboxes)
+        crops, labels = self.cropper.crop(imgs[0], bboxes)
         flatten_shape = [-1, 64, 64, 64]
         crops.reshape(flatten_shape)
         labels.reshape(flatten_shape)
