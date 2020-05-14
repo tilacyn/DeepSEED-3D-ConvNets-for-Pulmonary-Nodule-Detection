@@ -4,6 +4,7 @@ from os.path import join as opjoin
 
 import numpy as np
 import torch
+from tqdm import tqdm
 from data_loader import LungNodule3Ddetector
 from layers_se import *
 from patient_data_loader import PatientDataLoader
@@ -57,7 +58,8 @@ class AbstractTest:
 
     def common_test(self, threshold):
         tn, tp, n, p = 0, 0, 0, 0
-        for output, target in zip(self.outputs, self.targets):
+        print('evaluating roc results...')
+        for output, target in tqdm(zip(self.outputs, self.targets)):
             pred = self.gp(output, threshold)
             if self.is_positive(target):
                 p += 1
@@ -69,7 +71,7 @@ class AbstractTest:
                     tn += 1
             # print('pred: {}'.format(pred))
             # print('true: {}'.format(true))
-            print(tp, tn, p, n)
+            # print(tp, tn, p, n)
         return [tp, tn, p, n]
 
 
@@ -116,13 +118,14 @@ class PatientTest(AbstractTest):
 
     def predict_on_data(self, data_loader):
         outputs, targets = [], []
-        for i, (data, one_scan_labels, coord) in enumerate(data_loader):
-            print('data shape ', data.shape)
-            print('data shape ', one_scan_labels.shape)
+        print('feeding crops to the net..')
+        for i, (data, one_scan_labels, coord) in tqdm(enumerate(data_loader)):
+            # print('data shape ', data.shape)
+            # print('data shape ', one_scan_labels.shape)
             data = data.transpose(0, 1)
             one_scan_labels = one_scan_labels.transpose(0, 1)
             for crop, label in zip(data, one_scan_labels):
-                print('crop shape ', crop.shape)
+                # print('crop shape ', crop.shape)
                 crop, label, coord = crop.cuda(), label.cuda(), coord.cuda()
                 crop = crop.type(torch.cuda.FloatTensor)
                 coord = coord.type(torch.cuda.FloatTensor)
