@@ -118,7 +118,9 @@ class PatientTest(AbstractTest):
     def predict_on_data(self, data_loader):
         outputs, targets = [], []
         for i, (data, target, coord) in enumerate(data_loader):
+            print('data shape ', data.shape)
             for crop, label in zip(data, target):
+                print('crop shape ', crop.shape)
                 crop, label, coord = crop.cuda(), label.cuda(), coord.cuda()
                 crop = crop.type(torch.cuda.FloatTensor)
                 coord = coord.type(torch.cuda.FloatTensor)
