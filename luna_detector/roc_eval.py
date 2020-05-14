@@ -119,6 +119,7 @@ class PatientTest(AbstractTest):
         outputs, targets = [], []
         for i, (data, target, coord) in enumerate(data_loader):
             print('data shape ', data.shape)
+            data = data.transpose(0, 1)
             for crop, label in zip(data, target):
                 print('crop shape ', crop.shape)
                 crop, label, coord = crop.cuda(), label.cuda(), coord.cuda()
