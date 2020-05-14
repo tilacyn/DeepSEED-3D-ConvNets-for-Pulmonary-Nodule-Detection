@@ -129,8 +129,6 @@ class PatientTest(AbstractTest):
                 crop, label, coord = crop.cuda(), label.cuda(), coord.cuda()
                 crop = crop.type(torch.cuda.FloatTensor)
                 coord = coord.type(torch.cuda.FloatTensor)
-                print(crop.shape)
-                print(coord.shape)
 
                 output = self.net(crop, coord)
                 outputs.append(output.cpu().detach().numpy()[0])
