@@ -7,4 +7,5 @@ augmented_data_path = opjoin(ctgan_base_path, 'generated')
 data_path = '/content/drive/My Drive/dsb2018_topcoders/data'
 luna_path = opjoin(base_path, 'luna_detector')
 augmented_prp = opjoin(base_path, 'data/augmented-preprocess-result-path')
+segment_path = opjoin(base_path, 'data/luna-segment/seg-lungs-LUNA16')
 annos_path = opjoin(luna_path, 'labels/annos.csv')

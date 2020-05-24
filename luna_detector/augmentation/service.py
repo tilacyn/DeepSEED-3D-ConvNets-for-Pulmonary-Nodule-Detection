@@ -1,16 +1,13 @@
 import numpy as np
-from config_training import config as config
 from os.path import join as opjoin
 import os
 import pandas as pd
 from prepare import savenpy_luna, load_itk_image
-from path import augmented_prp
+from path import augmented_prp, annos_path, segment_path
 
 class AugmentationService:
-    def __init__(self, augmented_data_path, annos_path=None):
+    def __init__(self, augmented_data_path):
         self.augmented_data_path = augmented_data_path
-        # annos_path = opjoin(self.)
-        annos_path = config['luna_label'] if annos_path is None else annos_path
         self.annos = pd.read_csv(annos_path).to_numpy()
 
 
@@ -22,7 +19,7 @@ class AugmentationService:
         # spacing = np.load(get_property_path('spacing'))
         # origin = np.load(get_property_path('origin'))
         # is_flip = False
-        mask, origin, spacing, is_flip  = load_itk_image(opjoin(config['luna_segment'], '{}.mhd'.format(scan_id)))
+        mask, origin, spacing, is_flip  = load_itk_image(opjoin(segment_path, '{}.mhd'.format(scan_id)))
         return scan, origin, spacing, is_flip, mask
 
 
