@@ -92,18 +92,20 @@ def lumTrans(img):
     return newimg
 
 
-def savenpy_luna(id, annos, filelist, luna_segment, luna_data, savepath):
+def savenpy_luna(id, annos, filelist, luna_segment, luna_data, savepath, scan_loader=None):
+    def default_scan_loader(id):
+        name = filelist[id]
+        sliceim, origin, spacing, isflip = load_itk_image(os.path.join(luna_data, name + '.mhd'))
+        Mask, origin, spacing, isflip = load_itk_image(os.path.join(luna_segment, name + '.mhd'))
+        return sliceim, origin, spacing, isflip, Mask
+
     print('enter save npy')
     print(savepath)
     islabel = True
     isClean = True
     resolution = np.array([1, 1, 1])
     #     resolution = np.array([2,2,2])
-    name = filelist[id]
 
-    sliceim, origin, spacing, isflip = load_itk_image(os.path.join(luna_data, name + '.mhd'))
-
-    Mask, origin, spacing, isflip = load_itk_image(os.path.join(luna_segment, name + '.mhd'))
     if isflip:
         Mask = Mask[:, ::-1, ::-1]
     newshape = np.round(np.array(Mask.shape) * spacing / resolution).astype('int')
