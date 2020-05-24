@@ -4,6 +4,7 @@ from os.path import join as opjoin
 import os
 import pandas as pd
 from prepare import savenpy_luna, load_itk_image
+from path import augmented_prp
 
 class AugmentationService:
     def __init__(self, augmented_data_path, annos_path=None):
@@ -26,9 +27,8 @@ class AugmentationService:
 
 
     # preprocess augmented
-    def preprocess_augmented_data(self, augmented_prp=None):
+    def preprocess_augmented_data(self):
         augmented_scan_paths = [path for path in os.listdir(self.augmented_data_path) if path.endswith('mhd.npy')]
         scan_ids = [path[-11:-8] for path in augmented_scan_paths]
-        augmented_prp = 'data/augmented-preprocess-result-path' if augmented_prp is None else augmented_prp
         for scan_id in scan_ids:
             savenpy_luna(scan_id, self.annos, None, None, None, augmented_prp, self.load_np)
