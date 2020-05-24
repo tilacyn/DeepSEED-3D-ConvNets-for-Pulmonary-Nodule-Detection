@@ -97,11 +97,11 @@ def savenpy_luna(id, annos, filelist, luna_segment, luna_data, savepath, scan_lo
         name = filelist[id]
         sliceim, origin, spacing, isflip = load_itk_image(os.path.join(luna_data, name + '.mhd'))
         Mask, origin, spacing, isflip = load_itk_image(os.path.join(luna_segment, name + '.mhd'))
-        return sliceim, origin, spacing, isflip, Mask
+        return sliceim, origin, spacing, isflip, Mask, name
 
     if scan_loader is None:
         scan_loader = default_scan_loader
-    sliceim, origin, spacing, isflip, Mask = scan_loader(id)
+    sliceim, origin, spacing, isflip, Mask, name = scan_loader(id)
 
     print('enter save npy')
     print(savepath)

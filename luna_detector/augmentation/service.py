@@ -20,7 +20,7 @@ class AugmentationService:
         # origin = np.load(get_property_path('origin'))
         # is_flip = False
         mask, origin, spacing, is_flip  = load_itk_image(opjoin(segment_path, '{}.mhd'.format(scan_id)))
-        return scan, origin, spacing, is_flip, mask
+        return scan, origin, spacing, is_flip, mask, scan_id
 
 
     # preprocess augmented
