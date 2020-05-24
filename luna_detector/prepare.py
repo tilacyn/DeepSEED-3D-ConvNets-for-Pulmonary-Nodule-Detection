@@ -93,6 +93,14 @@ def lumTrans(img):
 
 
 def savenpy_luna(id, annos, filelist, luna_segment, luna_data, savepath, scan_loader=None):
+    def print_data():
+        print('sliceim ', sliceim.shape)
+        print('origin ', origin.shape)
+        print('spacing ', spacing.shape)
+        print('isflip ', isflip)
+        print('Mask ', Mask.shape)
+        print('name ', name)
+
     def default_scan_loader(id):
         name = filelist[id]
         sliceim, origin, spacing, isflip = load_itk_image(os.path.join(luna_data, name + '.mhd'))
@@ -102,6 +110,8 @@ def savenpy_luna(id, annos, filelist, luna_segment, luna_data, savepath, scan_lo
     if scan_loader is None:
         scan_loader = default_scan_loader
     sliceim, origin, spacing, isflip, Mask, name = scan_loader(id)
+
+    print_data()
 
     print('enter save npy')
     print(savepath)
