@@ -65,6 +65,8 @@ parser.add_argument('--random', default=False, type=bool, metavar='N',
                     help='number of gpu for test')
 parser.add_argument('--mode', default='ours', type=str, metavar='N',
                     help='either our lidc version or their luna version')
+parser.add_argument('--with_augmented', default=0, type=int, metavar='N',
+                    help='either include augmented data in train set or not')
 
 
 def main():
@@ -111,7 +113,8 @@ def main():
         datadir = os.path.join('/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection',
                                config_training['preprocess_result_path'])
         print('len lun train', len(luna_train))
-        train_dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train')
+        with_augmented = args.with_augmented == 1
+        train_dataset = LungNodule3Ddetector(datadir, luna_train, config, phase='train', with_augmented=with_augmented)
     else:
         datadir = '/content/drive/My Drive/dsb2018_topcoders/data'
         train_dataset = LIDCDataset(datadir, config, 0, args.train_len, load=True, random=args.random)
