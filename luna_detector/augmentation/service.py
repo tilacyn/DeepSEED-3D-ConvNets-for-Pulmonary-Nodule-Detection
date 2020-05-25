@@ -12,8 +12,6 @@ class AugmentationService:
 
 
     def load_np(self, scan_id):
-        if os.path.exists(os.path.join(augmented_prp, '{}_clean.npy'.format(scan_id))):
-            print('skipping {}'.format(scan_id))
         path2scan = opjoin(self.augmented_data_path, 'generated_{}.mhd.npy'.format(scan_id))
         scan = np.load(path2scan)
         mask, origin, spacing, is_flip  = load_itk_image(opjoin(segment_path, '{}.mhd'.format(scan_id)))
@@ -25,4 +23,7 @@ class AugmentationService:
         augmented_scan_paths = [path for path in os.listdir(self.augmented_data_path) if path.endswith('mhd.npy')]
         scan_ids = [path[-11:-8] for path in augmented_scan_paths]
         for scan_id in scan_ids:
+            if os.path.exists(os.path.join(augmented_prp, '{}_clean.npy'.format(scan_id))):
+                print('skipping {}'.format(scan_id))
+                continue
             savenpy_luna(scan_id, self.annos, None, None, None, augmented_prp, self.load_np)
