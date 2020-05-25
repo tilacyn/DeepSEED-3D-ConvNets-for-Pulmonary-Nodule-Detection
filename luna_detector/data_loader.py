@@ -119,13 +119,13 @@ class LungNodule3Ddetector(Dataset):
         return torch.from_numpy(sample), torch.from_numpy(label), coord
 
 
-def __len__(self):
-    if self.phase == 'train':
-        return int(len(self.bboxes) / (1 - self.r_rand))
-    elif self.phase == 'val':
-        return len(self.bboxes)
-    else:
-        return len(self.sample_bboxes)
+    def __len__(self):
+        if self.phase == 'train':
+            return int(len(self.bboxes) / (1 - self.r_rand))
+        elif self.phase == 'val':
+            return len(self.bboxes)
+        else:
+            return len(self.sample_bboxes)
 
 
 def augment(sample, target, bboxes, coord, ifflip=True, ifrotate=True, ifswap=True):
