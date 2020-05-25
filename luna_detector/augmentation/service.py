@@ -12,13 +12,10 @@ class AugmentationService:
 
 
     def load_np(self, scan_id):
+        if os.path.exists(os.path.join(augmented_prp, '{}_clean.npy'.format(scan_id))):
+            print('skipping {}'.format(scan_id))
         path2scan = opjoin(self.augmented_data_path, 'generated_{}.mhd.npy'.format(scan_id))
         scan = np.load(path2scan)
-        # base_prp = config['preprocess-result-path']
-        # get_property_path = lambda prop : opjoin(base_prp, '{}_{}.npy'.format(scan_id, prop))
-        # spacing = np.load(get_property_path('spacing'))
-        # origin = np.load(get_property_path('origin'))
-        # is_flip = False
         mask, origin, spacing, is_flip  = load_itk_image(opjoin(segment_path, '{}.mhd'.format(scan_id)))
         return scan, origin, spacing, is_flip, mask, scan_id
 

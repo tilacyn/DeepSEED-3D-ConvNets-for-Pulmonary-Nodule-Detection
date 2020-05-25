@@ -106,31 +106,6 @@ def main():
     luna_train = np.load('./luna_train.npy')
     luna_test = np.load('./luna_test.npy')
 
-    if args.test == 1:
-        print("start test")
-        datadir = os.path.join('/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection',
-                               config_training['preprocess_result_path'])
-
-        margin = 32
-        sidelen = 144
-        split_comber = SplitComb(sidelen, config['max_stride'], config['stride'], margin, config['pad_value'])
-        dataset = LungNodule3Ddetector(
-            datadir,
-            luna_test,
-            config,
-            phase='test',
-            split_comber=split_comber
-        )
-        test_loader = DataLoader(
-            dataset,
-            batch_size=1,
-            shuffle=False,
-            num_workers=args.workers,
-            collate_fn=collate,
-            pin_memory=False)
-
-        test(test_loader, net, get_pbb, save_dir, config)
-        return
 
     if args.mode != 'ours':
         datadir = os.path.join('/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection',
@@ -140,15 +115,11 @@ def main():
     else:
         datadir = '/content/drive/My Drive/dsb2018_topcoders/data'
         train_dataset = LIDCDataset(datadir, config, 0, args.train_len, load=True, random=args.random)
-        val_dataset = LIDCDataset(datadir, config, args.train_len, args.train_len + args.val_len, load=True,
-                                  random=args.random)
 
     print(args.batch_size)
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.workers,
                               pin_memory=True)
 
-    # val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.workers,
-    #                         pin_memory=True)
 
     optimizer = torch.optim.SGD(net.parameters(), args.lr, momentum=0.9, weight_decay=args.weight_decay)
 
@@ -233,141 +204,6 @@ def train(data_loader, net, loss, epoch, optimizer, get_lr, save_dir):
         np.mean(metrics[:, 3]),
         np.mean(metrics[:, 4]),
         np.mean(metrics[:, 5])))
-
-
-def validate(data_loader, net, loss):
-    start_time = time.time()
-
-    net.eval()
-
-    metrics = []
-    for i, (data, target, coord, _) in enumerate(data_loader):
-        data = torch.autograd.Variable(data.cuda(non_blocking=True))
-        target = torch.autograd.Variable(target.cuda(non_blocking=True))
-        coord = torch.autograd.Variable(coord.cuda(non_blocking=True))
-
-        data = data.type(torch.cuda.FloatTensor)
-        target = target.type(torch.cuda.FloatTensor)
-        coord = coord.type(torch.cuda.FloatTensor)
-
-        output = net(data, coord)
-        loss_output = loss(output, target, train=False)
-
-        loss_output[0] = loss_output[0].item()
-        metrics.append(loss_output)
-    end_time = time.time()
-
-    metrics = np.asarray(metrics, np.float32)
-    print('Validation: tpr %3.2f, tnr %3.8f, total pos %d, total neg %d, time %3.2f' % (
-        100.0 * np.sum(metrics[:, 6]) / np.sum(metrics[:, 7]),
-        100.0 * np.sum(metrics[:, 8]) / np.sum(metrics[:, 9]),
-        np.sum(metrics[:, 7]),
-        np.sum(metrics[:, 9]),
-        end_time - start_time))
-    print('loss %2.4f, classify loss %2.4f, regress loss %2.4f, %2.4f, %2.4f, %2.4f' % (
-        np.mean(metrics[:, 0]),
-        np.mean(metrics[:, 1]),
-        np.mean(metrics[:, 2]),
-        np.mean(metrics[:, 3]),
-        np.mean(metrics[:, 4]),
-        np.mean(metrics[:, 5])))
-    print('\n')
-    return np.mean(metrics[:, 0])
-
-
-def test(data_loader, net, get_pbb, save_dir, config):
-    start_time = time.time()
-    save_dir = os.path.join(save_dir, 'bbox')
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-    print(save_dir)
-    net.eval()
-    namelist = []
-    split_comber = data_loader.dataset.split_comber
-
-    for i_name, (data, target, coord, nzhw) in enumerate(data_loader):
-        target = [np.asarray(t, np.float32) for t in target]
-        lbb = target[0]
-        nzhw = nzhw[0]
-        name = data_loader.dataset.filenames[i_name].split('-')[0].split('/')[-1].split('_clean')[0]
-        data = data[0][0]
-        coord = coord[0][0]
-        isfeat = False
-        if 'output_feature' in config:
-            if config['output_feature']:
-                isfeat = True
-        n_per_run = args.n_test
-        print(data.size())
-
-        splitlist = list(range(0, len(data) + 1, n_per_run))
-        if splitlist[-1] != len(data):
-            splitlist.append(len(data))
-        outputlist = []
-        featurelist = []
-        print('splitlist ', splitlist)
-        print('n_per_run ', n_per_run)
-
-        for i in range(len(splitlist) - 1):
-            input = torch.autograd.Variable(data[splitlist[i]:splitlist[i + 1]].cuda(non_blocking=True))
-            inputcoord = torch.autograd.Variable(coord[splitlist[i]:splitlist[i + 1]].cuda(non_blocking=True))
-            print(input.shape)
-            if isfeat:
-                output, feature = net(input, inputcoord)
-                featurelist.append(feature.data.cpu().numpy())
-            else:
-                output = net(input, inputcoord)
-            outputlist.append(output.data.cpu().numpy())
-            del input, inputcoord, output
-            torch.cuda.empty_cache()
-
-        output = np.concatenate(outputlist, 0)
-        output = split_comber.combine(output, nzhw=nzhw)
-        if isfeat:
-            feature = np.concatenate(featurelist, 0).transpose([0, 2, 3, 4, 1])[:, :, :, :, :, np.newaxis]
-            feature = split_comber.combine(feature, sidelen)[..., 0]
-
-        thresh = -3
-        pbb, mask = get_pbb(output, thresh, ismask=True)
-        if isfeat:
-            feature_selected = feature[mask[0], mask[1], mask[2]]
-            np.save(os.path.join(save_dir, name + '_feature.npy'), feature_selected)
-        # tp,fp,fn,_ = acc(pbb,lbb,0,0.1,0.1)
-        # print([len(tp),len(fp),len(fn)])
-        print([i_name, name])
-
-        np.save(os.path.join(save_dir, name + '_pbb.npy'), pbb)
-        np.save(os.path.join(save_dir, name + '_lbb.npy'), lbb)
-    np.save(os.path.join(save_dir, 'namelist.npy'), namelist)
-    end_time = time.time()
-
-    print('elapsed time is %3.2f seconds' % (end_time - start_time))
-
-
-def singletest(data, net, config, splitfun, combinefun, n_per_run, margin=64, isfeat=False):
-    z, h, w = data.size(2), data.size(3), data.size(4)
-    print(data.size())
-    data = splitfun(data, config['max_stride'], margin)
-    data = torch.autograd.Variable(data.cuda(non_blocking=True), requires_grad=False)
-    splitlist = range(0, args.split + 1, n_per_run)
-    outputlist = []
-    featurelist = []
-    for i in range(len(splitlist) - 1):
-        if isfeat:
-            output, feature = net(data[splitlist[i]:splitlist[i + 1]])
-            featurelist.append(feature)
-        else:
-            output = net(data[splitlist[i]:splitlist[i + 1]])
-        output = output.data.cpu().numpy()
-        outputlist.append(output)
-
-    output = np.concatenate(outputlist, 0)
-    output = combinefun(output, z / config['stride'], h / config['stride'], w / config['stride'])
-    if isfeat:
-        feature = np.concatenate(featurelist, 0).transpose([0, 2, 3, 4, 1])
-        feature = combinefun(feature, z / config['stride'], h / config['stride'], w / config['stride'])
-        return output, feature
-    else:
-        return output
 
 
 if __name__ == '__main__':
