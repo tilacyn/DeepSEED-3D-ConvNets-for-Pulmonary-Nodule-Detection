@@ -26,4 +26,7 @@ class AugmentationService:
             if os.path.exists(os.path.join(augmented_prp, '{}_clean.npy'.format(scan_id))):
                 print('skipping {}'.format(scan_id))
                 continue
-            savenpy_luna(scan_id, self.annos, None, None, None, augmented_prp, self.load_np)
+            try:
+                savenpy_luna(scan_id, self.annos, None, None, None, augmented_prp, self.load_np)
+            except:
+                pass
