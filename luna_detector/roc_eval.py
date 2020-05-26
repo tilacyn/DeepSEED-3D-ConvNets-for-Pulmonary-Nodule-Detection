@@ -60,19 +60,22 @@ class AbstractTest:
         return self.common_test(threshold)
 
     def froc_eval(self, threshold):
-        tn, tp, n, p = 0, 0, 0, 0
+        tn, tp, n, p, fp_bboxes = 0, 0, 0, 0, 0
         print('evaluating froc results...')
         for output, target in tqdm(zip(self.outputs, self.targets)):
             pred = self.gp(output, threshold)
             true = self.gp(target, 0.8)
-            if self.is_positive(target):
-                p += 1
-                if len(pred) > 0:
-                    tp += 1
-            else:
-                n += 1
-                if len(pred) == 0:
-                    tn += 1
+            print('pred ', pred)
+            print('true ', pred)
+            print(pred)
+            found_true = False
+            for bbox in pred:
+                if iou(true, bbox) > 0.5:
+                    found_true = True
+                else:
+                    fp_bboxes += 1
+            if found_true:
+                tp += 1
             # print('pred: {}'.format(pred))
             # print('true: {}'.format(true))
             # print(tp, tn, p, n)
