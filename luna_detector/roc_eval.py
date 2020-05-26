@@ -56,6 +56,29 @@ class AbstractTest:
     def is_positive(self, target):
         pass
 
+    def roc_eval(self, threshold):
+        return self.common_test(threshold)
+
+    def froc_eval(self, threshold):
+        tn, tp, n, p = 0, 0, 0, 0
+        print('evaluating froc results...')
+        for output, target in tqdm(zip(self.outputs, self.targets)):
+            pred = self.gp(output, threshold)
+            true = self.gp(target, 0.8)
+            if self.is_positive(target):
+                p += 1
+                if len(pred) > 0:
+                    tp += 1
+            else:
+                n += 1
+                if len(pred) == 0:
+                    tn += 1
+            # print('pred: {}'.format(pred))
+            # print('true: {}'.format(true))
+            # print(tp, tn, p, n)
+        return [tp, tn, p, n]
+
+
     def common_test(self, threshold):
         tn, tp, n, p = 0, 0, 0, 0
         print('evaluating roc results...')
@@ -93,8 +116,6 @@ class SimpleTest(AbstractTest):
             data, target, coord = data.cuda(), target.cuda(), coord.cuda()
             data = data.type(torch.cuda.FloatTensor)
             coord = coord.type(torch.cuda.FloatTensor)
-            print(data.shape)
-            print(coord.shape)
 
             output = self.net(data, coord)
             outputs.append(output.cpu().detach().numpy()[0])
@@ -104,6 +125,8 @@ class SimpleTest(AbstractTest):
 
     def test_luna(self, threshold):
         return self.common_test(threshold=threshold)
+
+
 
 
 class PatientTest(AbstractTest):
@@ -134,7 +157,4 @@ class PatientTest(AbstractTest):
                 outputs.append(output.cpu().detach().numpy()[0])
                 targets.append(label)
         return outputs, [self.transform_target(target) for target in targets]
-
-    def test_luna(self, threshold):
-        return self.common_test(threshold=threshold)
 
