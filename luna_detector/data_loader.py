@@ -33,11 +33,9 @@ def get_filenames_and_labels(idcs, start, end, data_dir, with_augmented=False):
             l = np.array([])
         labels.append(l)
     if with_augmented:
-        augmented_filenames = [filename for filename in os.listdir(augmented_prp) if filename.endswith('clean.npy')]
+        augmented_filenames = [filename for filename in os.listdir(augmented_prp) if filename.endswith('clean.npy') and filename[:3] in idcs]
         augmented_idcs = [int(filename[:3]) for filename in augmented_filenames]
-        print('unfiltered augmented idcs number ', len(augmented_idcs))
-        augmented_idcs = [idx for idx in augmented_idcs if str(idx).zfill(3) in idcs]
-        print('filtered augmented idcs number ', len(augmented_idcs))
+        print('augmented idcs number ', len(augmented_idcs))
         augmented_labels = [np.load(os.path.join(augmented_prp, '%s_label.npy' % idx)) for idx in augmented_idcs]
         augmented_filepaths = [os.path.join(augmented_prp, filename) for filename in augmented_filenames]
         filenames += augmented_filepaths
