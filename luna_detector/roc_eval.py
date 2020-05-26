@@ -65,21 +65,25 @@ class AbstractTest:
         for output, target in tqdm(zip(self.outputs, self.targets)):
             pred = self.gp(output, threshold)
             true = self.gp(target, 0.8)
-            print('pred ', pred)
-            print('true ', pred)
-            print(pred)
+            # print('pred ', pred)
+            # print('true ', true)
+            if len(true) == 0:
+                continue
+            p += 1
             found_true = False
-            for bbox in pred:
-                if iou(true, bbox) > 0.5:
-                    found_true = True
-                else:
+            for pred_bbox in pred:
+                for true_bbox in true:
+                    if iou(true_bbox, pred_bbox) > 0.5:
+                        found_true = True
+                        break
+                if not found_true:
                     fp_bboxes += 1
             if found_true:
                 tp += 1
             # print('pred: {}'.format(pred))
             # print('true: {}'.format(true))
             # print(tp, tn, p, n)
-        return [tp, tn, p, n]
+        return [tp, tn, p, n, fp_bboxes]
 
 
     def common_test(self, threshold):
