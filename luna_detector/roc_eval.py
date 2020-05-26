@@ -20,7 +20,7 @@ luna_path = opjoin(base_path, 'luna_detector')
 
 
 class AbstractTest:
-    def __init__(self, data_path=None, path_to_model='', start=0, end=0):
+    def __init__(self, data_path=None, path_to_model='', start=0, end=0, r_rand=0.9):
         self.data_path = default_data_path if data_path is None else data_path
         model = import_module('res18_se')
         print('creating model')
@@ -35,6 +35,7 @@ class AbstractTest:
         self.gp = GetPBB(config)
         self.start = start
         self.end = end
+        self.r_rand = r_rand
         dataset = self.create_dataset()
         data_loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1,
                                  pin_memory=True)
@@ -110,7 +111,7 @@ class SimpleTest(AbstractTest):
 
     def create_dataset(self):
         luna_test = np.load('./luna_test.npy')
-        dataset = LungNodule3Ddetector(self.data_path, luna_test, self.config, start=0, end=0, r_rand=0.9)
+        dataset = LungNodule3Ddetector(self.data_path, luna_test, self.config, start=0, end=0, r_rand=self.r_rand)
         return dataset
 
 
