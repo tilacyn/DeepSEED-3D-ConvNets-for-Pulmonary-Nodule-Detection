@@ -133,7 +133,7 @@ class FROCMetricsCalculator:
         self.label = label
 
     def load(self, filename):
-        self.label = filename
+        self.label = filename[:-4]
         self.roc_result = np.load(opjoin(ROC_RESULT_SAVE_PATH, filename))
 
     def roc_auc(self):
@@ -149,8 +149,8 @@ class FROCMetricsCalculator:
         plt.savefig(opjoin(PLOT_SAVE_PATH, self.label))
         plt.show()
 
-    def save(self, filename):
-        np.save(opjoin(ROC_RESULT_SAVE_PATH, filename), self.roc_result)
+    def save(self):
+        np.save(opjoin(ROC_RESULT_SAVE_PATH, self.label), self.roc_result)
 
 
 def draw_single_roc(roc_result, label):
