@@ -83,7 +83,7 @@ class AbstractTest:
             found_true = False
             for pred_bbox in pred:
                 for true_bbox in true:
-                    if iou(true_bbox, pred_bbox) > 0.5:
+                    if iou(true_bbox[1:], pred_bbox[1:]) > 0.5:
                         found_true = True
                         break
                 if not found_true:
