@@ -155,3 +155,7 @@ class FROCMetricsCalculator:
 
         plt.savefig(opjoin(self.luna_path, PLOT_SAVE_DIR, filename))
         plt.show()
+
+
+    def save(self, filename):
+        np.save(opjoin(self.luna_path, 'roc_results_npy', filename), self.roc_result)
