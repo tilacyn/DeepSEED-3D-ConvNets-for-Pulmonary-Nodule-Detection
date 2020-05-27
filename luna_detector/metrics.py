@@ -3,19 +3,21 @@ from matplotlib import pyplot as plt
 from os.path import join as opjoin
 import numpy as np
 
+PLOT_SAVE_DIR = 'plots'
+
 
 class Metrics:
     def __init__(self,
-               roc_auc,
-               min_dist01,
-               juden_index,
-               sensitivity,
-               specificity,
-               accuracy,
-               precision_positive,
-               precision_negative,
-               positive,
-               negative):
+                 roc_auc,
+                 min_dist01,
+                 juden_index,
+                 sensitivity,
+                 specificity,
+                 accuracy,
+                 precision_positive,
+                 precision_negative,
+                 positive,
+                 negative):
         self.roc_auc = roc_auc
         self.min_dist01 = min_dist01
         self.juden_index = juden_index
@@ -47,10 +49,13 @@ fpr = lambda x: (1 - x[1] / x[3])
 tpr = lambda x: x[0] / x[2]
 dist01 = lambda x: math.sqrt((fpr(x) ** 2) + ((1 - tpr(x)) ** 2))
 
+
 def dist_mid(x):
-  return (tpr(x) - fpr(x)) / math.sqrt(2)
+    return (tpr(x) - fpr(x)) / math.sqrt(2)
+
 
 import math
+
 
 class MetricsCalculator:
     def __init__(self, luna_path, roc_result, dice_threshold=0):
@@ -116,3 +121,37 @@ class MetricsCalculator:
                     optimal[2],
                     optimal[3])
         return m
+
+
+class FROCMetricsCalculator:
+    def __init__(self, luna_path, froc_result, dice_threshold=0):
+        self.luna_path = luna_path
+        roc_result = list(froc_result.values())
+        self.dice_threshold = dice_threshold
+        roc_result.reverse()
+        self.roc_result = froc_result
+
+    def roc_auc(self):
+        roc_auc = 0
+        for i in range(len(self.roc_result) - 1):
+            roc_auc += (fpr(self.roc_result[i + 1]) - fpr(self.roc_result[i])) * (
+                    tpr(self.roc_result[i + 1]) + tpr(self.roc_result[i])) / 2
+        return roc_auc
+
+    def draw_roc(self, filename):
+        points = [[res[-1] / res[2], res[0] / res[2]] for res in self.roc_result]
+        max_x = 10
+        plt.ylim(-0.1, 1.2)
+        plt.xlim(-0.1, max_x)
+        plt.ylabel('tpr')
+        plt.xlabel('average fp / crop')
+        plt.grid()
+
+        plt.plot(points, linewidth=3)
+        ax = plt.axes()
+
+        ax.arrow(0, 0, 0, 1.1, head_width=0.03, head_length=0.04, fc='k', ec='k', color='blue')
+        ax.arrow(0, 0, 1.1, 0, head_width=0.03, head_length=0.04, fc='k', ec='k', color='blue')
+
+        plt.savefig(opjoin(self.luna_path, PLOT_SAVE_DIR, filename))
+        plt.show()
