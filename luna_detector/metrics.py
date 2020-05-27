@@ -122,7 +122,6 @@ class MetricsCalculator:
                     optimal[3])
         return m
 
-
 class FROCMetricsCalculator:
     def __init__(self, froc_result):
         froc_result = list(froc_result.values())
@@ -138,9 +137,11 @@ class FROCMetricsCalculator:
 
     def draw_roc(self, filename):
         points = [[res[-1] / res[2], res[0] / res[2]] for res in self.roc_result]
+        points = np.array(points)
+        print(points)
         max_x = 10
-        plt.ylim(-0.1, 1.2)
-        plt.xlim(-0.1, max_x)
+        plt.ylim(-0.5, 1.2)
+        plt.xlim(-0.5, max_x)
         plt.ylabel('tpr')
         plt.xlabel('average fp / crop')
         plt.grid()
@@ -149,9 +150,9 @@ class FROCMetricsCalculator:
         ax = plt.axes()
 
         ax.arrow(0, 0, 0, 1.1, head_width=max_x / 30, head_length=0.04, fc='k', ec='k', color='blue')
-        ax.arrow(0, 0, max_x, 0, head_width=0.03, head_length=max_x / 30, fc='k', ec='k', color='blue')
+        ax.arrow(0, 0, max_x - 2, 0, head_width=0.03, head_length=max_x / 30, fc='k', ec='k', color='blue')
 
-        plt.savefig(opjoin(luna_path, PLOT_SAVE_DIR, filename))
+        plt.savefig(opjoin(luna_path, 'plots', filename))
         plt.show()
 
 

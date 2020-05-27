@@ -19,6 +19,15 @@ base_path = '/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-D
 luna_path = opjoin(base_path, 'luna_detector')
 
 
+def run_test(ltest, left=-3.5, right=5, thr_number=20, mode='roc'):
+  result = {}
+  roc_result = {}
+  f = ltest.test_luna if mode == 'roc' else ltest.froc_eval
+  for thr in np.linspace(left, right, thr_number):
+    result[thr] = f(thr)
+  return result
+
+
 class AbstractTest:
     def __init__(self, data_path=None, path_to_model='', start=0, end=0, r_rand=0.9):
         self.data_path = default_data_path if data_path is None else data_path
