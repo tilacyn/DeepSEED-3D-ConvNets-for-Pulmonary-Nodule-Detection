@@ -144,6 +144,7 @@ class FROCMetricsCalculator:
         return roc_auc
 
     def draw_roc(self):
+        prepare_canvas()
         draw_single_roc(self.roc_result, self.label)
 
         plt.savefig(opjoin(PLOT_SAVE_PATH, self.label))
