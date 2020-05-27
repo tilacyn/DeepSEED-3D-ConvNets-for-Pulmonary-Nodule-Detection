@@ -161,16 +161,15 @@ def draw_single_roc(roc_result, label):
     plt.plot(points[:, 0], points[:, 1], linewidth=3, label=label)
 
 
-def draw_several(mcs):
-    prepare_canvas()
+def draw_several(mcs, max_x=10):
+    prepare_canvas(max_x)
     for mc in mcs:
         draw_single_roc(mc.roc_result, label=mc.label)
     plt.legend()
     plt.show()
 
 
-def prepare_canvas():
-    max_x = 10
+def prepare_canvas(max_x=10):
     plt.ylim(-0.5, 1.2)
     plt.xlim(-0.5, max_x)
     plt.ylabel('tpr')
