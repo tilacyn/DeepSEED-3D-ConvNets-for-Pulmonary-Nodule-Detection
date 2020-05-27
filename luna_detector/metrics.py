@@ -2,6 +2,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from os.path import join as opjoin
 import numpy as np
+from path import luna_path
 
 PLOT_SAVE_DIR = 'plots'
 
@@ -58,8 +59,7 @@ import math
 
 
 class MetricsCalculator:
-    def __init__(self, luna_path, roc_result, dice_threshold=0):
-        self.luna_path = luna_path
+    def __init__(self, roc_result, dice_threshold=0):
         roc_result = list(roc_result.values())
         self.dice_threshold = dice_threshold
         roc_result.reverse()
@@ -102,7 +102,7 @@ class MetricsCalculator:
         ax.arrow(0, 0, 0, 1.1, head_width=0.03, head_length=0.04, fc='k', ec='k', color='blue')
         ax.arrow(0, 0, 1.1, 0, head_width=0.03, head_length=0.04, fc='k', ec='k', color='blue')
 
-        plt.savefig(opjoin(self.luna_path, filename))
+        plt.savefig(opjoin(luna_path, filename))
         plt.show()
 
     def calculate(self, tprw=1):
@@ -124,11 +124,9 @@ class MetricsCalculator:
 
 
 class FROCMetricsCalculator:
-    def __init__(self, luna_path, froc_result, dice_threshold=0):
-        self.luna_path = luna_path
-        roc_result = list(froc_result.values())
-        self.dice_threshold = dice_threshold
-        roc_result.reverse()
+    def __init__(self, froc_result):
+        froc_result = list(froc_result.values())
+        froc_result.reverse()
         self.roc_result = froc_result
 
     def roc_auc(self):
@@ -153,9 +151,9 @@ class FROCMetricsCalculator:
         ax.arrow(0, 0, 0, 1.1, head_width=0.03, head_length=0.04, fc='k', ec='k', color='blue')
         ax.arrow(0, 0, 1.1, 0, head_width=0.03, head_length=0.04, fc='k', ec='k', color='blue')
 
-        plt.savefig(opjoin(self.luna_path, PLOT_SAVE_DIR, filename))
+        plt.savefig(opjoin(luna_path, PLOT_SAVE_DIR, filename))
         plt.show()
 
 
     def save(self, filename):
-        np.save(opjoin(self.luna_path, 'roc_results_npy', filename), self.roc_result)
+        np.save(opjoin(luna_path, 'roc_results_npy', filename), self.roc_result)
