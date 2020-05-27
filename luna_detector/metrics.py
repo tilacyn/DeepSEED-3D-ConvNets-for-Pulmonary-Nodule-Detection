@@ -4,7 +4,8 @@ from os.path import join as opjoin
 import numpy as np
 from path import luna_path
 
-PLOT_SAVE_DIR = 'plots'
+PLOT_SAVE_PATH = opjoin(luna_path, 'plots')
+ROC_RESULT_SAVE_PATH = opjoin(luna_path, 'roc_results_npy')
 
 
 class Metrics:
@@ -122,11 +123,18 @@ class MetricsCalculator:
                     optimal[3])
         return m
 
+
 class FROCMetricsCalculator:
-    def __init__(self, froc_result):
-        froc_result = list(froc_result.values())
-        froc_result.reverse()
-        self.roc_result = froc_result
+    def __init__(self, froc_result=None, label=None):
+        if froc_result is not None:
+            froc_result = list(froc_result.values())
+            froc_result.reverse()
+            self.roc_result = froc_result
+        self.label = label
+
+    def load(self, filename):
+        self.label = filename
+        self.roc_result = np.load(opjoin(ROC_RESULT_SAVE_PATH, filename))
 
     def roc_auc(self):
         roc_auc = 0
@@ -135,26 +143,40 @@ class FROCMetricsCalculator:
                     tpr(self.roc_result[i + 1]) + tpr(self.roc_result[i])) / 2
         return roc_auc
 
-    def draw_roc(self, filename):
-        points = [[res[-1] / res[2], res[0] / res[2]] for res in self.roc_result]
-        points = np.array(points)
-        print(points)
-        max_x = 10
-        plt.ylim(-0.5, 1.2)
-        plt.xlim(-0.5, max_x)
-        plt.ylabel('tpr')
-        plt.xlabel('average fp / crop')
-        plt.grid()
+    def draw_roc(self):
+        draw_single_roc(self.roc_result, self.label)
 
-        plt.plot(points[:, 0], points[:, 1], linewidth=3)
-        ax = plt.axes()
-
-        ax.arrow(0, 0, 0, 1.1, head_width=max_x / 30, head_length=0.04, fc='k', ec='k', color='blue')
-        ax.arrow(0, 0, max_x - 2, 0, head_width=0.03, head_length=max_x / 30, fc='k', ec='k', color='blue')
-
-        plt.savefig(opjoin(luna_path, 'plots', filename))
+        plt.savefig(opjoin(PLOT_SAVE_PATH, self.label))
         plt.show()
 
-
     def save(self, filename):
-        np.save(opjoin(luna_path, 'roc_results_npy', filename), self.roc_result)
+        np.save(opjoin(ROC_RESULT_SAVE_PATH, filename), self.roc_result)
+
+
+def draw_single_roc(roc_result, label):
+    points = [[res[-1] / res[2], res[0] / res[2]] for res in roc_result]
+    points = np.array(points)
+
+    plt.plot(points[:, 0], points[:, 1], linewidth=3, label=label)
+
+
+def draw_several(mcs):
+    prepare_canvas()
+    for mc in mcs:
+        draw_single_roc(mc.roc_result, label=mc.label)
+    plt.legend()
+    plt.show()
+
+
+def prepare_canvas():
+    max_x = 10
+    plt.ylim(-0.5, 1.2)
+    plt.xlim(-0.5, max_x)
+    plt.ylabel('tpr')
+    plt.xlabel('average fp / crop')
+    plt.grid()
+
+    ax = plt.axes()
+
+    ax.arrow(0, 0, 0, 1.1, head_width=max_x / 30, head_length=0.04, fc='k', ec='k', color='blue')
+    ax.arrow(0, 0, max_x - 2, 0, head_width=0.03, head_length=max_x / 30, fc='k', ec='k', color='blue')
