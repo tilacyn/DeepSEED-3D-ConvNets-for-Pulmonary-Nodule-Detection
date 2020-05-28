@@ -185,9 +185,9 @@ def get_points(roc_result):
 
 
 def prepare_canvas(max_x=9.5):
-    plt.ylim(-0.2, 1.2)
+    plt.ylim(-0.1, 1.2)
     plt.xlim(-0.5, max_x)
-    plt.ylabel('tpr')
+    plt.ylabel('sensitivity')
     plt.xlabel('average fp / crop')
     plt.grid()
     plt.plot([0, 9], [1, 1], color='pink', linestyle='dashed', marker='o', linewidth=1)
@@ -201,4 +201,4 @@ def prepare_canvas(max_x=9.5):
     ax = plt.axes()
 
     ax.arrow(0, 0, 0, 1.1, head_width=max_x / 30, head_length=0.04, fc='k', ec='k', color='blue')
-    ax.arrow(0, 0, max_x - 2, 0, head_width=0.03, head_length=max_x / 30, fc='k', ec='k', color='blue')
+    ax.arrow(0, 0, max_x - 0.5, 0, head_width=0.03, head_length=max_x / 30, fc='k', ec='k', color='blue')
