@@ -7,7 +7,7 @@ import math
 config = {}
 config['anchors'] = [5.0, 10.0, 20.]
 config['chanel'] = 1
-config['crop_size'] = [64, 64, 64]
+config['crop_size'] = [128, 128, 128]
 config['stride'] = 4
 config['max_stride'] = 8
 config['num_neg'] = 800
