@@ -117,6 +117,7 @@ class LungNodule3Ddetector(Dataset):
         # print(target)
         label = self.label_mapping(sample.shape[1:], target, bboxes)
         sample = (sample.astype(np.float32) - 128) / 128
+        print('sample shape: ', sample.shape)
         return torch.from_numpy(sample), torch.from_numpy(label), coord
 
 
