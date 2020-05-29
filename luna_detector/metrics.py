@@ -143,8 +143,9 @@ class FROCMetricsCalculator:
         plt.savefig(opjoin(PLOT_SAVE_PATH, self.label))
         plt.show()
 
-    def save(self):
-        np.save(opjoin(ROC_RESULT_SAVE_PATH, self.label), self.roc_result)
+    def save(self, subfolder):
+        subfolder = '' if subfolder is None else subfolder
+        np.save(opjoin(ROC_RESULT_SAVE_PATH,  subfolder, self.label), self.roc_result)
 
 
 def save_csv(mcs, filename):
