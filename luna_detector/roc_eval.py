@@ -133,6 +133,9 @@ class SimpleTest(AbstractTest):
             data, target, coord = data.cuda(), target.cuda(), coord.cuda()
             data = data.type(torch.cuda.FloatTensor)
             coord = coord.type(torch.cuda.FloatTensor)
+            print('data shape: ', data.shape)
+            print('coord shape: ', coord.shape)
+            # print('coord shape: ', coord.shape)
 
             output = self.net(data, coord)
             outputs.append(output.cpu().detach().numpy()[0])
