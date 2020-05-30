@@ -148,7 +148,7 @@ def main():
         state_dict = net.module.state_dict()
         for key in state_dict.keys():
             state_dict[key] = state_dict[key].cpu()
-        if epoch % 10 == 2:
+        if epoch % 3 == 2:
             torch.save({
                 'epoch': epoch + 1,
                 'save_dir': save_dir,
