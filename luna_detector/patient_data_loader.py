@@ -7,9 +7,9 @@ import os
 import numpy as np
 
 
-def pad(crop):
+def pad(crop, size):
     s = crop.shape
-    pad_sizes = [[64 - s[0], 0], [64 - s[1], 0], [64 - s[2], 0]]
+    pad_sizes = [[size - s[0], 0], [size - s[1], 0], [size - s[2], 0]]
     # print(pad_sizes)
     return np.pad(crop, pad_sizes, 'minimum')
 
@@ -18,7 +18,7 @@ class PatientDataLoader(Dataset):
     def __init__(self, data_dir, split_path, config, split_comber=None, start=0, end=0):
         self.stride = config['stride']
         self.split_comber = split_comber
-        # idcs = np.load(split_path)
+        self.crop_size = config['crop_size']
         idcs = split_path
         self.filenames, self.sample_bboxes = get_filenames_and_labels(idcs, start, end, data_dir)
         self.label_mapping = LabelMapping(config, 'train')
@@ -30,7 +30,7 @@ class PatientDataLoader(Dataset):
         imgs = np.load(filename)
         bboxes = self.sample_bboxes[idx]
         crops, labels = self.cropper.crop(imgs[0], bboxes)
-        flatten_shape = [-1, 64, 64, 64]
+        flatten_shape = np.concatenate([[-1], self.crop_size])
         crops = crops.reshape(flatten_shape)
         crops = crops[:, np.newaxis, ...]
         labels = labels.reshape(-1)
