@@ -67,6 +67,8 @@ parser.add_argument('--mode', default='ours', type=str, metavar='N',
                     help='either our lidc version or their luna version')
 parser.add_argument('--with_augmented', default=0, type=int, metavar='N',
                     help='either include augmented data in train set or not')
+parser.add_argument('--dataset_split', default=0, type=int, metavar='N',
+                    help='split mode')
 
 
 def main():
@@ -105,8 +107,14 @@ def main():
     cudnn.benchmark = True
     net = DataParallel(net)
 
-    luna_train = np.load('./luna_train.npy')
-    luna_test = np.load('./luna_test.npy')
+    if args.dataset_split == 0:
+        split_files_postfix = ''
+    else:
+        split_files_postfix = '_1'
+
+
+    luna_train = np.load('./luna_train{}.npy'.format(split_files_postfix))
+    luna_test = np.load('./luna_test{}.npy'.format(split_files_postfix))
 
 
     if args.mode != 'ours':
@@ -157,6 +165,10 @@ def main():
                 os.path.join(save_dir, 'detector_%03d.ckpt' % epoch))
             print("save model on epoch %d" % epoch)
 
+
+def resolve_dataset_split(dataset_split):
+    if dataset_split == 0:
+        return np.load('./luna_train.npy')
 
 def train(data_loader, net, loss, epoch, optimizer, get_lr, save_dir):
     start_time = time.time()
