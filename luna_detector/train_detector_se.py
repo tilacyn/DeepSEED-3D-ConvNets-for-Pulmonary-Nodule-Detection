@@ -110,7 +110,7 @@ def main():
     if args.dataset_split == 0:
         split_files_postfix = ''
     else:
-        split_files_postfix = '_1'
+        split_files_postfix = '_{}'.format(args.dataset_split)
 
 
     luna_train = np.load('./luna_train{}.npy'.format(split_files_postfix))
