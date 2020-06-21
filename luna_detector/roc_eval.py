@@ -29,8 +29,9 @@ def run_test(ltest, left=-3.5, right=5, thr_number=20, mode='roc'):
 
 
 class AbstractTest:
-    def __init__(self, data_path=None, path_to_model='', start=0, end=0, r_rand=0.9):
+    def __init__(self, data_path=None, path_to_model='', start=0, end=0, r_rand=0.9, stage=0):
         self.data_path = default_data_path if data_path is None else data_path
+        self.stage = stage
         model = import_module('res18_se')
         print('creating model')
         config, net, loss, get_pbb = model.get_model()
@@ -119,7 +120,7 @@ class AbstractTest:
 class SimpleTest(AbstractTest):
 
     def create_dataset(self):
-        luna_test = np.load('./luna_test.npy')
+        luna_test = np.load('./luna_test_{}.npy'.format(self.stage))
         dataset = LungNodule3Ddetector(self.data_path, luna_test, self.config, start=0, end=0, r_rand=self.r_rand)
         return dataset
 
