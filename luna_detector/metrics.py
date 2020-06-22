@@ -163,7 +163,7 @@ def save_csv(mcs, filename):
                        '2': [results[label][3] for label in results],
                        '4': [results[label][4] for label in results],
                        '8': [results[label][5] for label in results],
-                       'average': [np.mean(results[label][:6]) for label in results]
+                       'average': [np.round(np.mean(results[label][:6]), 3) for label in results]
                        })
     df.to_csv(filename, index=False)
 
