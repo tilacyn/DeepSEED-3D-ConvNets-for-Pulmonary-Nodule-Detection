@@ -155,6 +155,7 @@ def save_csv(mcs, filename):
         points = get_points(mc.roc_result)
         sensitivities = np.interp(target_xs, points[:, 0], points[:, 1])
         results[mc.label] = sensitivities
+        results[mc.label] = [np.round(metric, 3) for metric in results[mc.label]]
     df = pd.DataFrame({'model_name': [label for label in results],
                        '0.25': [results[label][0] for label in results],
                        '0.5': [results[label][1] for label in results],
@@ -162,6 +163,7 @@ def save_csv(mcs, filename):
                        '2': [results[label][3] for label in results],
                        '4': [results[label][4] for label in results],
                        '8': [results[label][5] for label in results],
+                       'average': [np.mean(results[label] for label in results)]
                        })
     df.to_csv(filename, index=False)
 
