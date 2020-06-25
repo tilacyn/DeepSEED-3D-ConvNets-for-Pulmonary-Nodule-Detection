@@ -145,7 +145,7 @@ class FROCMetricsCalculator:
 
     def save(self, subfolder):
         subfolder = '' if subfolder is None else subfolder
-        np.save(opjoin(ROC_RESULT_SAVE_PATH,  subfolder, self.label), self.roc_result)
+        np.save(opjoin(ROC_RESULT_SAVE_PATH, subfolder, self.label), self.roc_result)
 
 
 def save_csv(mcs, filename):
@@ -207,15 +207,26 @@ def prepare_canvas(max_x=9.5):
     ax.arrow(0, 0, max_x - 0.5, 0, head_width=0.03, head_length=max_x / 30, fc='k', ec='k', color='blue')
 
 
-
 def add_averages_to_csv(filename, output):
-  df = pd.read_csv(filename)
-  metrics = df.to_numpy()
-  def create_average_row(name):
-    rows = np.array([row for row in metrics if row[0].startswith(name)])
-    return [name] + [np.round(np.mean(values), 3) for values in [rows[:, i + 1] for i in range(7)]]
-  average_aug = create_average_row('augmented')
-  average_baseline = create_average_row('baseline')
-  df.loc[len(metrics)] = average_aug
-  df.loc[len(metrics) + 1] = average_baseline
-  df.to_csv(output)
+    df = pd.read_csv(filename)
+    metrics = df.to_numpy()
+
+    def create_row(name, type):
+        f = None
+        if type == 'average':
+            f = np.mean
+        elif type == 'std':
+            f = np.std
+        rows = np.array([row for row in metrics if row[0].startswith(name)])
+        return [name] + [np.round(f(values), 3) for values in [rows[:, i + 1] for i in range(7)]]
+
+
+    average_aug = create_row('augmented', 'average')
+    average_baseline = create_row('baseline', 'average')
+    std_aug = create_row('augmented', 'std')
+    std_baseline = create_row('baseline', 'std')
+    df.loc[len(metrics)] = average_aug
+    df.loc[len(metrics) + 1] = average_baseline
+    df.loc[len(metrics) + 2] = std_aug
+    df.loc[len(metrics) + 3] = std_baseline
+    df.to_csv(output)
