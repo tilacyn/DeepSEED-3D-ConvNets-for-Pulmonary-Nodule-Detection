@@ -18,31 +18,26 @@ default_data_path = os.path.join('/content/drive/My Drive/DeepSEED-3D-ConvNets-f
 base_path = '/content/drive/My Drive/DeepSEED-3D-ConvNets-for-Pulmonary-Nodule-Detection'
 luna_path = opjoin(base_path, 'luna_detector')
 
+model = import_module('res18_se')
 
-def run_test(ltest, left=-3.5, right=5, thr_number=20, mode='roc'):
+
+def run_test(ltest, left=-3.5, right=5, thr_number=20, mode='roc', net_number=0):
   result = {}
-  roc_result = {}
   f = ltest.test_luna if mode == 'roc' else ltest.froc_eval
   for thr in np.linspace(left, right, thr_number):
-    result[thr] = f(thr)
+    result[thr] = f(thr, net_number)
   return result
 
 
 class AbstractTest:
-    def __init__(self, data_path=None, path_to_model='', start=0, end=0, r_rand=0.9, stage=0):
+    def __init__(self, data_path=None, paths2model=None, start=0, end=0, r_rand=0.9, stage=0):
+        if paths2model is None:
+            paths2model = ['']
         self.data_path = default_data_path if data_path is None else data_path
         self.stage = stage
-        model = import_module('res18_se')
         print('creating model')
-        config, net, loss, get_pbb = model.get_model()
-        net = net.cuda()
-        loss = loss.cuda()
-        checkpoint = torch.load(opjoin(luna_path, 'test_results', path_to_model))
-        net.load_state_dict(checkpoint['state_dict'])
-        self.net = net
-        self.config = config
-        self.loss = loss
-        self.gp = GetPBB(config)
+        self.nets = [self._init_net(path2model) for path2model in paths2model]
+        self.gp = GetPBB(self.config)
         self.start = start
         self.end = end
         self.r_rand = r_rand
@@ -51,6 +46,15 @@ class AbstractTest:
                                  pin_memory=True)
 
         self.outputs, self.targets = self.predict_on_data(data_loader)
+
+    def _init_net(self, path2model):
+        config, net, loss, get_pbb = model.get_model()
+        net = net.cuda()
+        checkpoint = torch.load(opjoin(luna_path, 'test_results', path2model))
+        net.load_state_dict(checkpoint['state_dict'])
+        self.config = config
+        return net
+
 
     @abstractmethod
     def create_dataset(self):
@@ -70,10 +74,10 @@ class AbstractTest:
     def roc_eval(self, threshold):
         return self.common_test(threshold)
 
-    def froc_eval(self, threshold):
+    def froc_eval(self, threshold, net_number):
         tn, tp, n, p, fp_bboxes = 0, 0, 0, 0, 0
         print('evaluating froc results...')
-        for output, target in tqdm(zip(self.outputs, self.targets)):
+        for output, target in tqdm(zip(self.outputs[net_number], self.targets)):
             pred = self.gp(output, threshold)
             true = self.gp(target, 0.8)
             # print('pred ', pred)
@@ -129,7 +133,7 @@ class SimpleTest(AbstractTest):
         return len(self.gp(target, 0.8)) > 0
 
     def predict_on_data(self, data_loader):
-        outputs, targets = [], []
+        outputs, targets = [[] for _ in self.nets], []
         for i, (data, target, coord) in enumerate(data_loader):
             data, target, coord = data.cuda(), target.cuda(), coord.cuda()
             data = data.type(torch.cuda.FloatTensor)
@@ -137,9 +141,9 @@ class SimpleTest(AbstractTest):
             print('data shape: ', data.shape)
             print('coord shape: ', coord.shape)
             # print('coord shape: ', coord.shape)
-
-            output = self.net(data, coord)
-            outputs.append(output.cpu().detach().numpy()[0])
+            for j, net in enumerate(self.nets):
+                output = net(data, coord)
+                outputs[j].append(output.cpu().detach().numpy()[0])
             targets.append(target)
         return outputs, [self.transform_target(target) for target in targets]
 
@@ -178,4 +182,3 @@ class PatientTest(AbstractTest):
                 outputs.append(output.cpu().detach().numpy()[0])
                 targets.append(label)
         return outputs, [self.transform_target(target) for target in targets]
-
