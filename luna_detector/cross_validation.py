@@ -44,17 +44,18 @@ class TestWrapper:
 
 
 class DoubleTestWrapper:
-    def __init__(self, cv_stage, baseline_epoch, augmented_epoch):
+    def __init__(self, cv_stage, baseline_epoch, augmented_epoch, all_tta=False):
         self.cv_stage = cv_stage
         self.baseline_epoch = baseline_epoch
         self.augmented_epoch = augmented_epoch
         self.baseline_label = str_label(False, cv_stage, baseline_epoch)
         self.augmented_label = str_label(True, cv_stage, augmented_epoch)
+        self.all_tta = all_tta
 
     def run(self, r_rand=0.5, stage=0):
         path2baseline = label2model(False, self.cv_stage, self.baseline_epoch)['path2model']
         path2augmented = label2model(True, self.cv_stage, self.augmented_epoch)['path2model']
-        self.test = SimpleTest(paths2model=[path2baseline, path2augmented], r_rand=r_rand, stage=stage)
+        self.test = SimpleTest(paths2model=[path2baseline, path2augmented], r_rand=r_rand, stage=stage, all_tta=self.all_tta)
 
     def eval_metrics(self):
         baseline_result = run_test(self.test, mode='froc', left=-1, thr_number=10, net_number=0)
@@ -98,16 +99,17 @@ class TripleTestWrapper(DoubleTestWrapper):
 
 
 class CrossValidation:
-    def __init__(self, subfolder):
+    def __init__(self, subfolder, all_tta=False):
         self.stage2tw = {}
         self.subfolder = subfolder
+        self.all_tta = all_tta
 
     def init_stage(self, number, baseline_epoch, wa_epoch):
-        tw = DoubleTestWrapper(number, baseline_epoch, wa_epoch)
+        tw = DoubleTestWrapper(number, baseline_epoch, wa_epoch, self.all_tta)
         self.stage2tw[number] = tw
 
     def init_triple_stage(self, number, baseline_epoch, wa_epoch,  path2model):
-        tw = TripleTestWrapper(number, baseline_epoch, wa_epoch)
+        tw = TripleTestWrapper(number, baseline_epoch, wa_epoch, self.all_tta)
         tw.add_baseline(path2model)
         self.stage2tw[number] = tw
 

@@ -30,7 +30,7 @@ def run_test(ltest, left=-3.5, right=5, thr_number=20, mode='roc', net_number=0)
 
 
 class AbstractTest:
-    def __init__(self, data_path=None, paths2model=None, start=0, end=0, r_rand=0.9, stage=0):
+    def __init__(self, data_path=None, paths2model=None, start=0, end=0, r_rand=0.9, stage=0, all_tta=False):
         if paths2model is None:
             paths2model = ['']
         self.data_path = default_data_path if data_path is None else data_path
@@ -41,6 +41,9 @@ class AbstractTest:
         self.start = start
         self.end = end
         self.r_rand = r_rand
+        if all_tta:
+            self.config['augtype'] = {'flip': True, 'swap': True, 'scale': True, 'rotate': True}
+            print('ALL TTA')
         dataset = self.create_dataset()
         data_loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=1,
                                  pin_memory=True)

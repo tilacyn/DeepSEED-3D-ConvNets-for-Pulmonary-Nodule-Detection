@@ -218,7 +218,7 @@ def add_averages_to_csv(filename, output):
         elif type == 'std':
             f = np.std
         rows = np.array([row for row in metrics if row[0].startswith(name)])
-        return [name] + [np.round(f(values), 3) for values in [rows[:, i + 1] for i in range(7)]]
+        return ['{}_{}'.format(name, type)] + [np.round(f(values), 3) for values in [rows[:, i + 1] for i in range(7)]]
 
 
     average_aug = create_row('augmented', 'average')
