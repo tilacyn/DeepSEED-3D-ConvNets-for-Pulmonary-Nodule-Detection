@@ -77,6 +77,26 @@ class DoubleTestWrapper:
         self.augmented_mc.save(subfolder)
 
 
+
+class TripleTestWrapper(DoubleTestWrapper):
+    def add_baseline(self, path2model):
+        self.path2second_baseline = path2model
+
+    def run(self, r_rand=0.5, stage=0):
+        path2baseline = label2model(False, self.cv_stage, self.baseline_epoch)['path2model']
+        path2augmented = label2model(True, self.cv_stage, self.augmented_epoch)['path2model']
+        self.test = SimpleTest(paths2model=[path2baseline, path2augmented, self.path2second_baseline], r_rand=r_rand, stage=stage)
+
+    def eval_metrics(self):
+        baseline_result = run_test(self.test, mode='froc', left=-1, thr_number=10, net_number=0)
+        augmented_result = run_test(self.test, mode='froc', left=-1, thr_number=10, net_number=1)
+        self.baseline_mc = FROCMetricsCalculator(baseline_result, label=self.baseline_label)
+        self.augmented_mc = FROCMetricsCalculator(augmented_result, label=self.augmented_label)
+        second_baseline_result = run_test(self.test, mode='froc', left=-1, thr_number=10, net_number=2)
+        second_baseline_mc = FROCMetricsCalculator(second_baseline_result, label='label')
+        self.baseline_mc.roc_result = np.add(self.baseline_mc.roc_result, second_baseline_mc.roc_result)
+
+
 class CrossValidation:
     def __init__(self, subfolder):
         self.stage2tw = {}
@@ -86,15 +106,17 @@ class CrossValidation:
         tw = DoubleTestWrapper(number, baseline_epoch, wa_epoch)
         self.stage2tw[number] = tw
 
+    def init_triple_stage(self, number, baseline_epoch, wa_epoch,  path2model):
+        tw = TripleTestWrapper(number, baseline_epoch, wa_epoch)
+        tw.add_baseline(path2model)
+        self.stage2tw[number] = tw
+
     def run_stage(self, number, r_rand=0.5):
         self.stage2tw[number].run(r_rand, number)
 
     def eval_stage_metrics(self, number):
         self.stage2tw[number].eval_metrics()
 
-    def add_metrics(self, number, mc):
-        original_roc_result = self.stage2tw[number].baseline_mc.roc_result
-        self.stage2tw[number].baseline_mc.roc_result = np.add(original_roc_result, mc.roc_result)
 
     def save_stage(self, number):
         self.stage2tw[number].save(self.subfolder)
