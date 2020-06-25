@@ -49,7 +49,7 @@ class DoubleTestWrapper:
         self.baseline_epoch = baseline_epoch
         self.augmented_epoch = augmented_epoch
         self.baseline_label = str_label(False, cv_stage, baseline_epoch)
-        self.augmented_label = str_label(False, cv_stage, augmented_epoch)
+        self.augmented_label = str_label(True, cv_stage, augmented_epoch)
 
     def run(self, r_rand=0.5, stage=0):
         path2baseline = label2model(False, self.cv_stage, self.baseline_epoch)['path2model']
