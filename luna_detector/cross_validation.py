@@ -78,8 +78,9 @@ class DoubleTestWrapper:
 
 
 class CrossValidation:
-    def __init__(self):
+    def __init__(self, subfolder):
         self.stage2tw = {}
+        self.subfolder = subfolder
 
     def init_stage(self, number, baseline_epoch, wa_epoch):
         tw = DoubleTestWrapper(number, baseline_epoch, wa_epoch)
@@ -96,10 +97,10 @@ class CrossValidation:
         self.stage2tw[number].baseline_mc.roc_result = np.add(original_roc_result, mc.roc_result)
 
     def save_stage(self, number):
-        self.stage2tw[number].save('cross_validation')
+        self.stage2tw[number].save(self.subfolder)
 
     def load_stage(self, number):
-        self.stage2tw[number].load('cross_validation')
+        self.stage2tw[number].load(self.subfolder)
 
     def run_stages(self):
         for i in range(5):
