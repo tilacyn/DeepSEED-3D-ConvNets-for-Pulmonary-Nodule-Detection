@@ -2,7 +2,7 @@ from os.path import join as opjoin
 
 import numpy as np
 
-from metrics import FROCMetricsCalculator, draw_several, save_csv
+from metrics import FROCMetricsCalculator, draw_several, save_csv, MetricsCalculator
 from roc_eval import SimpleTest, run_test
 
 
@@ -19,19 +19,20 @@ def str_label(wa, cv_stage, epoch):
 
 
 class TestWrapper:
-    def __init__(self, wa, cv_stage, epoch):
+    def __init__(self, wa, cv_stage, epoch, mode='froc'):
         self.wa = wa
         self.cv_stage = cv_stage
         self.epoch = epoch
         self.label = str_label(wa, cv_stage, epoch)
+        self.mode = mode
 
     def run(self, r_rand=0.5, stage=0):
         path2model = label2model(self.wa, self.cv_stage, self.epoch)['path2model']
         self.test = SimpleTest(paths2model=[path2model], r_rand=r_rand, stage=stage)
 
     def eval_metrics(self):
-        result = run_test(self.test, mode='froc', left=-1, thr_number=10)
-        self.mc = FROCMetricsCalculator(result, label=self.label)
+        result = run_test(self.test, mode=self.mode, left=-1, thr_number=10)
+        self.mc = FROCMetricsCalculator(result, label=self.label) if self.mode == 'froc' else MetricsCalculator(result)
 
     def load(self, subfolder=None):
         self.mc = FROCMetricsCalculator(label=self.label)

@@ -23,7 +23,7 @@ model = import_module('res18_se')
 
 def run_test(ltest, left=-3.5, right=5, thr_number=20, mode='roc', net_number=0):
   result = {}
-  f = ltest.test_luna if mode == 'roc' else ltest.froc_eval
+  f = ltest.roc_eval if mode == 'roc' else ltest.froc_eval
   for thr in np.linspace(left, right, thr_number):
     result[thr] = f(thr, net_number)
   return result
