@@ -74,9 +74,6 @@ class AbstractTest:
     def is_positive(self, target):
         pass
 
-    def roc_eval(self, threshold):
-        return self.common_test(threshold)
-
     def froc_eval(self, threshold, net_number):
         tn, tp, n, p, fp_bboxes = 0, 0, 0, 0, 0
         print('evaluating froc results...')
@@ -104,10 +101,10 @@ class AbstractTest:
         return [tp, tn, p, n, fp_bboxes]
 
 
-    def common_test(self, threshold):
+    def roc_eval(self, threshold, net_number):
         tn, tp, n, p = 0, 0, 0, 0
         print('evaluating roc results...')
-        for output, target in tqdm(zip(self.outputs, self.targets)):
+        for output, target in tqdm(zip(self.outputs[net_number], self.targets)):
             pred = self.gp(output, threshold)
             if self.is_positive(target):
                 p += 1
@@ -149,10 +146,6 @@ class SimpleTest(AbstractTest):
                 outputs[j].append(output.cpu().detach().numpy()[0])
             targets.append(target)
         return outputs, [self.transform_target(target) for target in targets]
-
-
-    def test_luna(self, threshold):
-        return self.common_test(threshold=threshold)
 
 
 
