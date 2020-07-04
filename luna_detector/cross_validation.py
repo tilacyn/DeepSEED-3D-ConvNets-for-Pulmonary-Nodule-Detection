@@ -3,7 +3,7 @@ from os.path import join as opjoin
 import numpy as np
 
 from metrics import FROCMetricsCalculator, draw_several, save_csv, MetricsCalculator
-from roc_eval import SimpleTest, run_test
+from roc_eval import SimpleTest, PatientTest, run_test
 
 
 def label2model(wa, cv_stage, epoch):

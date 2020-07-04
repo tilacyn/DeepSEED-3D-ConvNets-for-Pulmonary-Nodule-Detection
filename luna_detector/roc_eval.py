@@ -153,7 +153,7 @@ class SimpleTest(AbstractTest):
 class PatientTest(AbstractTest):
 
     def create_dataset(self):
-        luna_test = np.load('./luna_test.npy')
+        luna_test = np.load('./luna_test_{}.npy'.format(self.stage))
         dataset = PatientDataLoader(self.data_path, luna_test, self.config, start=0, end=0)
         return dataset
 
