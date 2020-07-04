@@ -19,16 +19,20 @@ def str_label(wa, cv_stage, epoch):
 
 
 class TestWrapper:
-    def __init__(self, wa, cv_stage, epoch, mode='froc'):
+    def __init__(self, wa, cv_stage, epoch, mode='froc', dtype='crop'):
         self.wa = wa
         self.cv_stage = cv_stage
         self.epoch = epoch
         self.label = str_label(wa, cv_stage, epoch)
         self.mode = mode
+        self.dtype = dtype
 
     def run(self, r_rand=0.5, stage=0):
         path2model = label2model(self.wa, self.cv_stage, self.epoch)['path2model']
-        self.test = SimpleTest(paths2model=[path2model], r_rand=r_rand, stage=stage)
+        if self.dtype == 'crop':
+            self.test = SimpleTest(paths2model=[path2model], r_rand=r_rand, stage=stage) 
+        else:
+            self.test = PatientTest(paths2model=[path2model], r_rand=r_rand, stage=stage)
 
     def eval_metrics(self):
         result = run_test(self.test, mode=self.mode, left=-1, thr_number=10)
