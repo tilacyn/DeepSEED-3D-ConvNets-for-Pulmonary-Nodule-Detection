@@ -161,7 +161,7 @@ class PatientTest(AbstractTest):
         return target
 
     def predict_on_data(self, data_loader):
-        outputs, targets = [], []
+        outputs, targets = [[] for _ in self.nets], []
         print('feeding crops to the net..')
         for i, (data, one_scan_labels, coord) in tqdm(enumerate(data_loader)):
             # print('data shape ', data.shape)
@@ -174,7 +174,8 @@ class PatientTest(AbstractTest):
                 crop = crop.type(torch.cuda.FloatTensor)
                 coord = coord.type(torch.cuda.FloatTensor)
 
-                output = self.nets[0](crop, coord)
-                outputs.append(output.cpu().detach().numpy()[0])
+                for j, net in enumerate(self.nets):
+                    output = net(data, coord)
+                    outputs[j].append(output.cpu().detach().numpy()[0])
                 targets.append(label)
         return outputs, [self.transform_target(target) for target in targets]
