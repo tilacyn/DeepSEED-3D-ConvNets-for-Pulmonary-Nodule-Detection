@@ -175,7 +175,7 @@ class PatientTest(AbstractTest):
                 coord = coord.type(torch.cuda.FloatTensor)
 
                 for j, net in enumerate(self.nets):
-                    output = net(data, coord)
+                    output = net(crop, coord)
                     outputs[j].append(output.cpu().detach().numpy()[0])
                 targets.append(label)
         return outputs, [self.transform_target(target) for target in targets]
