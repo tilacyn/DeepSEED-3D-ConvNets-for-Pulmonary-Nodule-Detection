@@ -174,7 +174,7 @@ class PatientTest(AbstractTest):
                 crop = crop.type(torch.cuda.FloatTensor)
                 coord = coord.type(torch.cuda.FloatTensor)
 
-                output = self.net(crop, coord)
+                output = self.nets[0](crop, coord)
                 outputs.append(output.cpu().detach().numpy()[0])
                 targets.append(label)
         return outputs, [self.transform_target(target) for target in targets]
