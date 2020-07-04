@@ -58,14 +58,14 @@ class Cropper(object):
             [[f(crop, i, j, k) for k, crop in enumerate(y)] for j, y in enumerate(yx)] for i, yx in enumerate(arr)]
 
     def crop(self, imgs, target):
-        fit_times = [1 + imgs.shape[i] // 64 for i in range(3)]
+        fit_times = [1 + imgs.shape[i] // self.crop_size[0] for i in range(3)]
         split_spaces = [np.int32(np.linspace(0, imgs.shape[i], fit_times[i] + 1)[1:-1]) for i in range(3)]
         split_spaces = np.array(split_spaces)
         crops = np.split(imgs, split_spaces[0])
         crops = [np.split(crop, split_spaces[1], axis=1) for crop in crops]
         crops = [[np.split(crop, split_spaces[2], axis=2) for crop in crop_line] for crop_line in crops]
         labels = self.get_labels(crops, target)
-        crops = self.apply3d(lambda c: pad(c, self.crop_size), crops)
+        crops = self.apply3d(lambda c: pad(c, self.crop_size[0]), crops)
         return np.array(crops), np.array(labels)
 
     def get_labels(self, crops, target):
