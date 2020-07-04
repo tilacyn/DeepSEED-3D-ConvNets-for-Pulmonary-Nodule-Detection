@@ -65,7 +65,7 @@ class Cropper(object):
         crops = [np.split(crop, split_spaces[1], axis=1) for crop in crops]
         crops = [[np.split(crop, split_spaces[2], axis=2) for crop in crop_line] for crop_line in crops]
         labels = self.get_labels(crops, target)
-        crops = self.apply3d(pad, crops)
+        crops = self.apply3d(lambda c: pad(c, self.crop_size), crops)
         return np.array(crops), np.array(labels)
 
     def get_labels(self, crops, target):
