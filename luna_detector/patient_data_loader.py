@@ -57,22 +57,64 @@ class Cropper(object):
         self.apply3d_enumerated = lambda f, arr: [
             [[f(crop, i, j, k) for k, crop in enumerate(y)] for j, y in enumerate(yx)] for i, yx in enumerate(arr)]
 
+    # def crop(self, imgs, target):
+    #     fit_times = [1 + imgs.shape[i] // self.crop_size[0] for i in range(3)]
+    #     split_spaces = [np.int32(np.linspace(0, imgs.shape[i], fit_times[i] + 1)[1:-1]) for i in range(3)]
+    #     split_spaces = np.array(split_spaces)
+    #     crops = np.split(imgs, split_spaces[0])
+    #     crops = [np.split(crop, split_spaces[1], axis=1) for crop in crops]
+    #     crops = [[np.split(crop, split_spaces[2], axis=2) for crop in crop_line] for crop_line in crops]
+    #     labels = self.get_labels(crops, target)
+    #     crops = self.apply3d(lambda c: pad(c, self.crop_size[0]), crops)
+    #     return np.array(crops), np.array(labels)
+
     def crop(self, imgs, target):
         fit_times = [1 + imgs.shape[i] // self.crop_size[0] for i in range(3)]
-        split_spaces = [np.int32(np.linspace(0, imgs.shape[i], fit_times[i] + 1)[1:-1]) for i in range(3)]
-        split_spaces = np.array(split_spaces)
-        crops = np.split(imgs, split_spaces[0])
-        crops = [np.split(crop, split_spaces[1], axis=1) for crop in crops]
-        crops = [[np.split(crop, split_spaces[2], axis=2) for crop in crop_line] for crop_line in crops]
-        labels = self.get_labels(crops, target)
-        crops = self.apply3d(lambda c: pad(c, self.crop_size[0]), crops)
-        return np.array(crops), np.array(labels)
+        crops = np.zeros([fit_times, self.crop_size])
+        coord_map = {}
+        for i in range(fit_times[0]):
+            for j in range(fit_times[1]):
+                for k in range(fit_times[2]):
+                    lb0, rb0 = i * 128, (i + 1) * 128
+                    lb1, rb1 = j * 128, (j + 1) * 128
+                    lb2, rb2 = k * 128, (k + 1) * 128
+                    if i == fit_times[0] - 1:
+                        lb0, rb0 = imgs.shape[0] - 129, imgs.shape[0] - 1
+                    if j == fit_times[1] - 1:
+                        lb1, rb1 = imgs.shape[1] - 129, imgs.shape[1] - 1
+                    if k == fit_times[2] - 1:
+                        lb2, rb2 = imgs.shape[2] - 129, imgs.shape[2] - 1
+                    crops[i][j][k] = imgs[lb0:rb0, lb1:rb1, lb2:rb2]
+                    coord_map[(i, j, k)] = np.array([lb0, lb1, lb2])
+        labels = self.get_labels(crops, target, coord_map)
+        return crops, np.array(labels)
 
-    def get_labels(self, crops, target):
+
+    # def get_labels(self, crops, target):
+    #     def get_label(crop, i, j, k):
+    #         sh = crop.shape
+    #         left_coord = np.array([sh[0] * i, sh[1] * j, sh[2] * k])
+    #         right_coord = np.array([sh[0] * (i + 1), sh[1] * (j + 1), sh[2] * (k + 1)])
+
+    #         def has_label(bbox, delta):
+    #             left_bbox_coord = bbox[:-1] - bbox[-1]
+    #             right_bbox_coord = bbox[:-1] + bbox[-1]
+    #             is_bbox_corner_inside = lambda corner: np.all(corner > left_coord + delta) and np.all(corner < right_coord - delta)
+    #             return is_bbox_corner_inside(left_bbox_coord) or is_bbox_corner_inside(right_bbox_coord)
+
+    #         for bbox in target:
+    #             if has_label(bbox, self.delta):
+    #                 return True
+    #         return False
+
+    #     labels = self.apply3d_enumerated(get_label, crops)
+    #     return labels
+
+
+    def get_labels(self, crops, target, coord_map):
         def get_label(crop, i, j, k):
-            sh = crop.shape
-            left_coord = np.array([sh[0] * i, sh[1] * j, sh[2] * k])
-            right_coord = np.array([sh[0] * (i + 1), sh[1] * (j + 1), sh[2] * (k + 1)])
+            left_coord = coord_map[(i, j, k)]
+            right_coord = np.array([a + 128 for a in left_coord])
 
             def has_label(bbox, delta):
                 left_bbox_coord = bbox[:-1] - bbox[-1]
