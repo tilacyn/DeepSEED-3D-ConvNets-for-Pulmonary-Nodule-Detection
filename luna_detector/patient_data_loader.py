@@ -70,7 +70,7 @@ class Cropper(object):
 
     def crop(self, imgs, target):
         fit_times = [1 + imgs.shape[i] // self.crop_size[0] for i in range(3)]
-        crops = np.zeros([fit_times, self.crop_size])
+        crops = np.zeros(np.concatenate([fit_times, self.crop_size]))
         coord_map = {}
         for i in range(fit_times[0]):
             for j in range(fit_times[1]):
