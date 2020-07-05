@@ -34,8 +34,8 @@ class TestWrapper:
         else:
             self.test = PatientTest(paths2model=[path2model], r_rand=r_rand, stage=stage)
 
-    def eval_metrics(self):
-        result = run_test(self.test, mode=self.mode, left=-1, thr_number=10)
+    def eval_metrics(self, left=-1, thr_number=10):
+        result = run_test(self.test, mode=self.mode, left=left, thr_number=thr_number)
         self.mc = FROCMetricsCalculator(result, label=self.label) if self.mode == 'froc' else MetricsCalculator(result)
 
     def load(self, subfolder=None):
