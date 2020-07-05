@@ -197,7 +197,7 @@ class PatientTest(AbstractTest):
                     tp += 1
             else:
                 n += 1
-                if preds_not_empty:
+                if not preds_not_empty:
                     tn += 1
             # print('pred: {}'.format(pred))
             # print('true: {}'.format(true))
