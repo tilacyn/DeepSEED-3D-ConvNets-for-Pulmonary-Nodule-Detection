@@ -157,8 +157,8 @@ class PatientTest(AbstractTest):
         dataset = PatientDataLoader(self.data_path, luna_test, self.config, start=0, end=0)
         return dataset
 
-    def is_positive(self, target):
-        return target
+    def is_positive(self, targets):
+        return np.any(targets)
 
     def predict_on_data(self, data_loader):
         outputs, targets = [[] for _ in self.nets], []
@@ -168,6 +168,9 @@ class PatientTest(AbstractTest):
             # print('data shape ', one_scan_labels.shape)
             data = data.transpose(0, 1)
             one_scan_labels = one_scan_labels.transpose(0, 1)
+            for j, _ in enumerate(self.nets):
+                outputs[j].append([])
+                targets.append([])
             for crop, label in zip(data, one_scan_labels):
                 # print('crop shape ', crop.shape)
                 crop, label, coord = crop.cuda(), label.cuda(), coord.cuda()
@@ -176,6 +179,29 @@ class PatientTest(AbstractTest):
 
                 for j, net in enumerate(self.nets):
                     output = net(crop, coord)
-                    outputs[j].append(output.cpu().detach().numpy()[0])
-                targets.append(label)
-        return outputs, [self.transform_target(target) for target in targets]
+                    outputs[j][i].append(output.cpu().detach().numpy()[0])
+                targets[i].append(self.transform_target(label))
+        return outputs, targets
+
+
+    def roc_eval(self, threshold, net_number):
+        tn, tp, n, p = 0, 0, 0, 0
+        print('evaluating roc results...')
+        for outputs, targets in tqdm(zip(self.outputs[net_number], self.targets)):
+            preds = [self.gp(output, threshold) for output in outputs]
+            preds_not_empty_list = [len(pred) > 0 for pred in preds]
+            preds_not_empty = np.any(preds_not_empty_list)
+            if self.is_positive(targets):
+                p += 1
+                if preds_not_empty:
+                    tp += 1
+            else:
+                n += 1
+                if preds_not_empty:
+                    tn += 1
+            # print('pred: {}'.format(pred))
+            # print('true: {}'.format(true))
+            # print(tp, tn, p, n)
+        return [tp, tn, p, n]
+
+
