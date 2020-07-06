@@ -106,10 +106,13 @@ class MetricsCalculator:
         plt.savefig(opjoin(luna_path, filename))
         plt.show()
 
-    def calculate(self, tprw=1):
+    def calculate(self, tprw=1, idx=-1):
         res = self.roc_result.copy()
-        res.sort(key=lambda x: tprw * tpr(x) - fpr(x))
-        optimal = res[-1]
+        if idx == -1:
+            res.sort(key=lambda x: tprw * tpr(x) - fpr(x))
+            optimal = res[-1]
+        else:
+            optimal = res[idx]
         print(optimal)
         m = Metrics(self.roc_auc(),
                     np.min([dist01(x) for x in self.roc_result]),
