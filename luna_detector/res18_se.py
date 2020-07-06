@@ -105,7 +105,7 @@ class Net(nn.Module):
         self._modules['nodule_output'][2].bias.data.fill_(focal_bias)
         self.use_dropout = True
 
-    def set_dropout(use_dropout):
+    def set_dropout(self, use_dropout):
         self.use_dropout = use_dropout
 
     def forward(self, x, coord):
