@@ -126,6 +126,17 @@ class MetricsCalculator:
                     optimal[3])
         return m
 
+    def load(self, filename):
+        self.label = filename[:-4]
+        self.roc_result = np.load(opjoin(ROC_RESULT_SAVE_PATH, filename))
+
+
+    def save(self, subfolder, label=None):
+        label = self.label if label is None
+        subfolder = '' if subfolder is None else subfolder
+        np.save(opjoin(ROC_RESULT_SAVE_PATH, subfolder, label), self.roc_result)
+
+
 
 class FROCMetricsCalculator:
     def __init__(self, froc_result=None, label=None):
