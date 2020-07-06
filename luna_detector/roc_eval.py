@@ -51,7 +51,7 @@ class AbstractTest:
         self.outputs, self.targets = self.predict_on_data(data_loader)
 
     def _init_net(self, path2model):
-        config, net, loss, get_pbb = model.get_model()
+        config, net, loss, get_pbb = model.get_model(use_dropout=False)
         net = net.cuda()
         checkpoint = torch.load(opjoin(luna_path, 'test_results', path2model))
         net.load_state_dict(checkpoint['state_dict'])

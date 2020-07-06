@@ -103,6 +103,10 @@ class Net(nn.Module):
                                             nn.Conv3d(64, 4 * len(config['anchors']), kernel_size=1))
         focal_bias = -math.log((1.0 - 0.01) / 0.01)
         self._modules['nodule_output'][2].bias.data.fill_(focal_bias)
+        self.use_dropout = True
+
+    def set_dropout(use_dropout):
+        self.use_dropout = use_dropout
 
     def forward(self, x, coord):
 
@@ -127,7 +131,8 @@ class Net(nn.Module):
         rev2 = self.path2(comb3)
 
         comb2 = self.back2(torch.cat((rev2, out2, coord), 1))  # 64+64
-        comb2 = self.drop(comb2)
+        if self.use_dropout:
+            comb2 = self.drop(comb2)
 
         nodule_out = self.nodule_output(comb2)
         regress_out = self.regress_output(comb2)
@@ -146,8 +151,9 @@ class Net(nn.Module):
         return out
 
 
-def get_model():
+def get_model(use_dropout=True):
     net = Net()
+    net.set_dropout(use_dropout)
     loss = FocalLoss(config['num_hard'])
     get_pbb = GetPBB(config)
     return config, net, loss, get_pbb
