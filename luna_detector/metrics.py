@@ -132,7 +132,7 @@ class MetricsCalculator:
 
 
     def save(self, subfolder, label=None):
-        label = self.label if label is None
+        label = self.label if label is None else label
         subfolder = '' if subfolder is None else subfolder
         np.save(opjoin(ROC_RESULT_SAVE_PATH, subfolder, label), self.roc_result)
 
